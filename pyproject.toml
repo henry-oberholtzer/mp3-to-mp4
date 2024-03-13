@@ -6,7 +6,7 @@ authors = ["Henry Oberholtzer <henryoberholtzer@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-mp3-to-mp4 = "mp3_to_mp4.main:app"
+mp3-to-mp4 = "mp3_to_mp4.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"

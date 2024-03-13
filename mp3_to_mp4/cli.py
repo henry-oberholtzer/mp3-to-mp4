@@ -5,24 +5,31 @@ from typing import Optional
 from rich import print
 
 import typer
+from typing_extensions import Annotated
 
 from mp3_to_mp4 import ERRORS, __app_name__, __version__, config, renderer
 
 app = typer.Typer()
 
 @app.command()
-def init(
+def configure(
   bg_color: str = typer.Option(
     str(renderer.DEFAULT_VIDEO_BG_COLOR),
     "--bg-color",
-    "-bgc",
+    "-bg",
     prompt=f"Background Color? (Hex)",
+  ),
+  output_dir: str = typer.Option(
+    str(renderer.DEFAULT_VIDEO_OUTPUT),
+    "--output",
+    "-o",
+    prompt=f"Output directory?",
   ),
 ) -> None:
   """
-  Sets the default rendering configuration.
+  Sets the default rendering configurationspoetr.
   """
-  app_init_error = config.init_app(bg_color)
+  app_init_error = config.init_app(bg_color, output_dir)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',
@@ -35,6 +42,7 @@ def _version_callback(value: bool) -> None:
     print(f"{__app_name__} v{__version__}\n")
     raise typer.Exit()
 
+
 @app.callback()
 def main(
   version: Optional[bool] = typer.Option(
@@ -44,32 +52,57 @@ def main(
     help="Show the application's version and exit.",
     callback=_version_callback,
     is_eager=True,
-  )
+  ),
 ) -> None:
+  """
+  A specific file to convert can be specified with --audio.
+  An image to use can be specified with --image.
+  A folder to process can be specified with --folder.
+  """
+  
   return
 
-
-
-
 @app.command()
-def render(audio: str, image: str = None):
+def render(
+    image: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    readable=True
+    )] = None,
+  audio: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    readable=True
+  )] = None,
+  folder: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=False,
+    dir_okay=True,
+    readable=True
+  )] = None,
+  join: bool = typer.Option(
+    False,
+    "--join",
+    "-j",
+    help="When using a folder, all tracks will be join in sequence into a single video."
+  )):
   """
-  Requires a specification of the path to the --audio
-  
+  Requires a path to an audio file for the --audio paramter.
   Optionally accepts an --image to use for the mp4.
-  
   Renders based on default configurations, unless arguments are supplied explicity.
   """
-  typer.echo(f"Converting: {audio}")
-  if image != None:
-    typer.echo(f"Using Image: {image}")
-
-@app.command()
-def batch_render(directory: str, image: str = None, as_full_album: bool = False):
-  """
-  Renders a selected --directory into mp4 videos
-  
-  All valid audio files in the directory can be combined into one video with --as-full-album
-  
-  If --image is specified, the image will be used for every mp4 rendered.
-  """
+  # If no folder, render a single track
+  if folder is None:
+    if audio is not None:
+      print(f"Using audio: {audio}")
+    if image is not None:
+      print(image)
+  else:
+  # If a folder is specified, render a batch of tracks.
+    print(folder)
+    if join is not False:
+      print(f"Joining tracks.")
+    if image is not None:
+      print(image)
