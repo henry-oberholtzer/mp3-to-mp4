@@ -1,17 +1,38 @@
 """ This module provides the command line interface for mp3 to mp4 """
 # mp3_to_mp4/cli.py
-
+from pathlib import Path
 from typing import Optional
+from rich import print
 
 import typer
 
-from mp3_to_mp4 import __app_name__, __version__
+from mp3_to_mp4 import ERRORS, __app_name__, __version__, config, renderer
 
 app = typer.Typer()
 
+@app.command()
+def init(
+  bg_color: str = typer.Option(
+    str(renderer.DEFAULT_VIDEO_BG_COLOR),
+    "--bg-color",
+    "-bgc",
+    prompt=f"Background Color? (Hex)",
+  ),
+) -> None:
+  """
+  Sets the default rendering configuration.
+  """
+  app_init_error = config.init_app(bg_color)
+  if app_init_error:
+    print(
+      f'Creating the config file failed with "{ERRORS[app_init_error]}',
+      style="colors(9)"
+    )
+    raise typer.Exit(1)
+
 def _version_callback(value: bool) -> None:
   if value:
-    typer.echo(f"{__app_name__} v{__version__}\n")
+    print(f"{__app_name__} v{__version__}\n")
     raise typer.Exit()
 
 @app.callback()
@@ -28,11 +49,7 @@ def main(
   return
 
 
-@app.command()
-def config():
-  """
-  Sets the rendering configuration.
-  """
+
 
 @app.command()
 def render(audio: str, image: str = None):
