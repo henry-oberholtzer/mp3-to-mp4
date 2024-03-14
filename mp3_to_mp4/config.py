@@ -1,16 +1,23 @@
 """This module provides Mp3-To-Mp4 configuration functionality."""
 
 import configparser
+import os
 from pathlib import Path
 
 import typer
 
 from mp3_to_mp4 import (
-  CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_READ_ERROR, CONFIG_WRITE_ERROR, SUCCESS, __app_name__
+  ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_READ_ERROR, CONFIG_WRITE_ERROR, SUCCESS, __app_name__
 )
 
 CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
+
+DEFAULT_VIDEO_BG_COLOR = "#000000"
+DEFAULT_VIDEO_HEIGHT = 1080
+DEFAULT_VIDEO_WIDTH = 1920
+DEFAULT_VIDEO_FRAMERATE = 2
+DEFAULT_VIDEO_OUTPUT = Path.home() / __app_name__
 
 CFG_VIDEO = "Video"
 CFG_OUTPUT = "Output"
@@ -47,3 +54,21 @@ def _create_config(bg_color: str, output_dir: str) -> int:
     return CONFIG_WRITE_ERROR
   return SUCCESS
 
+def check_config() -> int:
+  if not os.path.isfile(CONFIG_FILE_PATH):
+    print("No configuration file found. Creating a configuration file based on defaults.")
+    app_init_error = init_app(DEFAULT_VIDEO_BG_COLOR, DEFAULT_VIDEO_OUTPUT)
+    if app_init_error:
+      print(
+        f'Creating the config file failed with "{ERRORS[app_init_error]}',
+        style="colors(9)"
+      )
+      raise typer.Exit(1)
+  return SUCCESS
+
+class RenderConfig:
+  def __init__(self, config_path: Path):
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    self.bg_color = config[CFG_VIDEO]["bg_color"]
+    self.output_dir = config[CFG_OUTPUT]["output_dir"]

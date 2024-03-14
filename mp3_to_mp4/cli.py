@@ -14,13 +14,13 @@ app = typer.Typer()
 @app.command()
 def configure(
   bg_color: str = typer.Option(
-    str(renderer.DEFAULT_VIDEO_BG_COLOR),
+    str(config.DEFAULT_VIDEO_BG_COLOR),
     "--bg-color",
     "-bg",
     prompt=f"Background Color? (Hex)",
   ),
   output_dir: str = typer.Option(
-    str(renderer.DEFAULT_VIDEO_OUTPUT),
+    str(config.DEFAULT_VIDEO_OUTPUT),
     "--output",
     "-o",
     prompt=f"Output directory?",
@@ -64,24 +64,18 @@ def main(
 
 @app.command()
 def render(
+    path: Annotated[Path, typer.Option(
+    exists=True,
+    file_okay=True,
+    dir_okay=True,
+    readable=True
+  )],
     image: Annotated[Optional[Path], typer.Option(
     exists=True,
     file_okay=True,
     dir_okay=False,
     readable=True
     )] = None,
-  audio: Annotated[Optional[Path], typer.Option(
-    exists=True,
-    file_okay=True,
-    dir_okay=False,
-    readable=True
-  )] = None,
-  folder: Annotated[Optional[Path], typer.Option(
-    exists=True,
-    file_okay=False,
-    dir_okay=True,
-    readable=True
-  )] = None,
   join: bool = typer.Option(
     False,
     "--join",
@@ -89,20 +83,16 @@ def render(
     help="When using a folder, all tracks will be join in sequence into a single video."
   )):
   """
-  Requires a path to an audio file for the --audio paramter.
+  Requires a path to a folder or file under --path.
+  
   Optionally accepts an --image to use for the mp4.
-  Renders based on default configurations, unless arguments are supplied explicity.
+  
+  Renders based on default configurations.
   """
-  # If no folder, render a single track
-  if folder is None:
-    if audio is not None:
-      print(f"Using audio: {audio}")
-    if image is not None:
-      print(image)
-  else:
-  # If a folder is specified, render a batch of tracks.
-    print(folder)
-    if join is not False:
-      print(f"Joining tracks.")
-    if image is not None:
-      print(image)
+  # Check for configuration
+  config.check_config()
+  # Get configuration
+  render_cfg = config.RenderConfig(config.CONFIG_FILE_PATH)
+  # get_config() Needs to be written
+  video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
+  video.render()

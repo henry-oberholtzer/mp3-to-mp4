@@ -566,6 +566,20 @@ files = [
 ]
 
 [[package]]
+name = "tinytag"
+version = "1.10.1"
+description = "Read music meta data and length of MP3, OGG, OPUS, MP4, M4A, FLAC, WMA and Wave files"
+optional = false
+python-versions = ">=2.7"
+files = [
+    {file = "tinytag-1.10.1-py3-none-any.whl", hash = "sha256:e437654d04c966fbbbdbf807af61eb9759f1d80e4173a7d26202506b37cfdaf0"},
+    {file = "tinytag-1.10.1.tar.gz", hash = "sha256:122a63b836f85094aacca43fc807aaee3290be3de17d134f5f4a08b509ae268f"},
+]
+
+[package.extras]
+tests = ["flake8", "pytest", "pytest-cov"]
+
+[[package]]
 name = "tqdm"
 version = "4.66.2"
 description = "Fast, Extensible Progress Meter"
@@ -640,4 +654,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f8c515b6b4ce448b7485ca58248014bfa883590b1202060d32167b72499fde9a"
+content-hash = "339c9a6f6b0512f8405943755a1c3a3a5afcd2a7fc60d167067fbf4bda1d5580"

@@ -7,6 +7,8 @@ A CLI application for converting audio files (mp3, wav, aiff, etc) to mp4 file s
 - Python 3.12.0
 - Typer 0.9.0
 - MoviePy 1.0.3
+- ImageMagick
+- TinyTag 1.10.1
 - PyTest
 - Poetry (Dependency management)
 
