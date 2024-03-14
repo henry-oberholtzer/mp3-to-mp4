@@ -17,19 +17,31 @@ def config(
     str(cfg.DEFAULT_VIDEO_BG_COLOR),
     "--bg-color",
     "-bg",
-    prompt=f"Background Color? (Hex)",
+    prompt="Background Color? (Hex)",
   ),
   output_dir: str = typer.Option(
     str(cfg.DEFAULT_VIDEO_OUTPUT),
     "--output",
     "-o",
-    prompt=f"Output directory?",
+    prompt="Output directory?",
   ),
+  width: int = typer.Option(
+    int(cfg.DEFAULT_VIDEO_WIDTH),
+    "--width",
+    "-w",
+    prompt="Video width: (px)"
+  ),
+  height: int = typer.Option(
+    int(cfg.DEFAULT_VIDEO_HEIGHT),
+    "--height",
+    "-h",
+    prompt="Video height: (px)"
+  )
 ) -> None:
   """
   Sets the default rendering configurations.
   """
-  app_init_error = cfg.init_app(bg_color, output_dir)
+  app_init_error = cfg.init_app(bg_color, output_dir, width, height)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',
@@ -85,37 +97,3 @@ def main(
     video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
     video.render()
 
-# @app.command()
-# def render(
-#     path: Annotated[Path, typer.Option(
-#     exists=True,
-#     file_okay=True,
-#     dir_okay=True,
-#     readable=True
-#   )] = None,
-#     image: Annotated[Optional[Path], typer.Option(
-#     exists=True,
-#     file_okay=True,
-#     dir_okay=False,
-#     readable=True
-#     )] = None,
-#   join: bool = typer.Option(
-#     False,
-#     "--join",
-#     "-j",
-#     help="When using a folder, all tracks will be join in sequence into a single video."
-#   )):
-#   """
-#   Requires a path to a folder or file under --path.
-  
-#   Optionally accepts an --image to use for the mp4.
-  
-#   Renders based on default configurations.
-#   """
-#   # Check for configuration
-#   config.check_config()
-#   # Get configuration
-#   render_cfg = config.RenderConfig(config.CONFIG_FILE_PATH)
-#   # get_config() Needs to be written
-#   video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
-#   video.render()

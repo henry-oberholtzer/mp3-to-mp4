@@ -24,6 +24,7 @@ class Renderer:
     self.image = image
     self.join = join
     self.audio_list = []
+    self.dimensions = (self.config.width, self.config.height)
     
   def render(self):
     # If the path is a file, proceed with single file rendering.
@@ -70,7 +71,7 @@ class Renderer:
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
     Path(output_dir).mkdir(exist_ok=True)
-    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=2, codec="libx264")
+    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=2, codec="libx264", audio_bitrate="320k")
 
   def _valid_path(self, path: Path, regex: re, err: int) -> bool:
     if not regex.match(path.suffix):
@@ -115,20 +116,20 @@ class Renderer:
     if self.image is not None:
       pi = Image.open(self.image)
       width, height = pi.size
-      new_width = int(width * (1080/height))
-      resize = pi.resize((new_width, 1080))
+      new_width = int(width * (self.config.height/height))
+      resize = pi.resize((new_width, self.config.height))
       resize.save('temp_art.png')
-      image = ImageClip(resize)
-      return image.on_color(size=(1920,1080), color=color)
+      image = ImageClip('temp_art.png')
+      return image.on_color(size=self.dimensions, color=color)
     # Grabs image from metadata.
     elif image_bytes is not None:
       image_path = self._get_image_from_bytes(image_bytes)
       image = ImageClip(image_path)
-      return image.on_color(size=(1920,1080), color=color)
+      return image.on_color(size=self.dimensions, color=color)
     # Will eventually handle rendering without an image provided.
     
-    text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=(1920,1080))
-    return text.on_color(size=(1920,1080), color=color)
+    text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=self.dimensions)
+    return text.on_color(size=self.dimensions, color=color)
 
   def _clean_string(self, string: str):
     return re.sub(r"\W", "", string)

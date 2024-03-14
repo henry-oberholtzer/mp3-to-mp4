@@ -47,7 +47,6 @@ poetry run mp3-to-mp4 --path /c/my_folder/my_music.mp3 --image /c/other_folder/i
 - Full Test Coverage.
 - Default to in-folder image.
 - Joining option for albums folders.
-- Adjustable Resolution
 - Padding for Images.
 - Blurred Background Image option.
 - .exe for no installation. (PyInstaller)

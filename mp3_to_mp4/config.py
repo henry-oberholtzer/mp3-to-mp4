@@ -22,12 +22,12 @@ DEFAULT_VIDEO_OUTPUT = Path.home() / __app_name__
 CFG_VIDEO = "Video"
 CFG_OUTPUT = "Output"
 
-def init_app(bg_color: str, output_dir: str) -> int:
+def init_app(bg_color: str, output_dir: str, width: int, height: int) -> int:
   """ Initialize the application."""
   config_code = _init_config_file()
   if config_code != SUCCESS:
     return config_code
-  create_config_code = _create_config(bg_color, output_dir)
+  create_config_code = _create_config(bg_color, output_dir, width, height)
   if create_config_code != SUCCESS:
     return create_config_code
   return SUCCESS
@@ -43,9 +43,13 @@ def _init_config_file() -> int:
     return CONFIG_FILE_ERROR
   return SUCCESS
 
-def _create_config(bg_color: str, output_dir: str) -> int:
+def _create_config(bg_color: str, output_dir: str, width: int, height: int) -> int:
   config_parser = configparser.ConfigParser()
-  config_parser[CFG_VIDEO] = {"bg_color": bg_color}
+  config_parser[CFG_VIDEO] = {
+    "bg_color": bg_color,
+    "width": width,
+    "height": height
+    }
   config_parser[CFG_OUTPUT] = {"output_dir": output_dir}
   try:
     with CONFIG_FILE_PATH.open("w") as file:
@@ -72,3 +76,5 @@ class RenderConfig:
     config.read(config_path)
     self.bg_color = config[CFG_VIDEO]["bg_color"]
     self.output_dir = config[CFG_OUTPUT]["output_dir"]
+    self.width = int(config[CFG_VIDEO]["width"])
+    self.height = int(config[CFG_VIDEO]["height"])
