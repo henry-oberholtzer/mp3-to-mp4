@@ -56,12 +56,16 @@ class Renderer:
       audio_clip = AudioFileClip(str(audio))
       image.duration = audio_clip.duration
       image.audio = audio_clip
+      # Make filename.
+      tags = TinyTag.get(audio, image=True)
+      filename = self._clean_string(f"{tags.track}-{tags.artist}-{tags.title}")
       # Render.
-      self._final_render(image, self.config.output_dir, "testname")
+      self._final_render(image, self.config.output_dir, filename)
       # Close & remove files.
       image.close()
       audio_clip.close()
-      Path('temp_art.png').unlink()
+      if Path('temp_art.png').is_file():
+        Path('temp_art.png').unlink()
     
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
@@ -107,9 +111,24 @@ class Renderer:
     tags = TinyTag.get(current_audio, image=True)
     color = self._hex_to_rgb(self.config.bg_color)
     image_bytes = tags.get_image()
-    if image_bytes is not None:
+    # Grabs image from directory.
+    if self.image is not None:
+      pi = Image.open(self.image)
+      width, height = pi.size
+      new_width = int(width * (1080/height))
+      resize = pi.resize((new_width, 1080))
+      resize.save('temp_art.png')
+      image = ImageClip(resize)
+      return image.on_color(size=(1920,1080), color=color)
+    # Grabs image from metadata.
+    elif image_bytes is not None:
       image_path = self._get_image_from_bytes(image_bytes)
       image = ImageClip(image_path)
       return image.on_color(size=(1920,1080), color=color)
-    text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white')
-    return CompositeVideoClip([text], size=(1920,1080)).on_color(size=(1920,1080), color=color)
+    # Will eventually handle rendering without an image provided.
+    
+    text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=(1920,1080))
+    return text.on_color(size=(1920,1080), color=color)
+
+  def _clean_string(self, string: str):
+    return re.sub(r"\W", "", string)
