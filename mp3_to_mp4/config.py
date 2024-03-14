@@ -12,6 +12,9 @@ from mp3_to_mp4 import (
 CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
 
+CFG_VIDEO = "Video"
+CFG_OUTPUT = "Output"
+
 def init_app(bg_color: str, output_dir: str) -> int:
   """ Initialize the application."""
   config_code = _init_config_file()
@@ -35,13 +38,12 @@ def _init_config_file() -> int:
 
 def _create_config(bg_color: str, output_dir: str) -> int:
   config_parser = configparser.ConfigParser()
-  config_parser["Video"] = {"bg_color": bg_color}
-  config_parser["Output"] = {"output_dir": output_dir}
+  config_parser[CFG_VIDEO] = {"bg_color": bg_color}
+  config_parser[CFG_OUTPUT] = {"output_dir": output_dir}
   try:
     with CONFIG_FILE_PATH.open("w") as file:
       config_parser.write(file)
-      print(CONFIG_FILE_PATH)
   except OSError:
     return CONFIG_WRITE_ERROR
   return SUCCESS
-  
+

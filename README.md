@@ -8,6 +8,6 @@ A CLI application for converting audio files (mp3, wav, aiff, etc) to mp4 file s
 - Typer 0.9.0
 - MoviePy 1.0.3
 - PyTest
-- Poetry (Dependencie management)
+- Poetry (Dependency management)
 
 # Installation Guide
