@@ -47,12 +47,14 @@ poetry run mp3-to-mp4 --path /c/my_folder/my_music.mp3 --image /c/other_folder/i
 - Full Test Coverage.
 - Default to in-folder image.
 - Joining option for albums folders.
-- Padding for Images.
 - Blurred Background Image option.
 - .exe for no installation. (PyInstaller)
-- Bitrate for audio encoding.
+- Adjustable bitrate for audio encoding.
 - Automatic YouTube Upload.
 - Waveform Visualization.
+- Initialize configuration command.
+- Show current settings on config.
+- File name parameters.
 
 # Known Bugs & Issues
 

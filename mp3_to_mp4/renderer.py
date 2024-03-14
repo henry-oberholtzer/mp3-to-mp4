@@ -119,7 +119,6 @@ class Renderer:
     # Grabs image from directory.
     if self.image is not None:
       pi = Image.open(self.image)
-      width, height = pi.size
       resize = pi.resize(self._resize(pi.size))
       resize.save('temp_art.png')
       image = ImageClip('temp_art.png')
@@ -135,4 +134,4 @@ class Renderer:
     return text.on_color(size=self.dimensions, color=color)
 
   def _clean_string(self, string: str):
-    return re.sub(r"\W", "", string)
+    return re.sub(r"\W+", "-", string)
