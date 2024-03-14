@@ -36,12 +36,18 @@ def config(
     "--height",
     "-h",
     prompt="Video height: (px)"
-  )
+  ),
+  image_padding: int = typer.Option(
+    int(cfg.DEFAULT_IMAGE_PADDING),
+    "--padding",
+    "-p",
+    prompt="Image padding: (px)"
+  ), 
 ) -> None:
   """
   Sets the default rendering configurations.
   """
-  app_init_error = cfg.init_app(bg_color, output_dir, width, height)
+  app_init_error = cfg.init_app(bg_color, output_dir, width, height, image_padding=image_padding)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',

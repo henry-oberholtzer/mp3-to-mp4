@@ -102,11 +102,15 @@ class Renderer:
   
   def _get_image_from_bytes(self, image: bytes):
     pi = Image.open(io.BytesIO(image))
-    width, height = pi.size
-    new_width = int(width * (1080/height))
-    resize = pi.resize((new_width, 1080))
+    resize = pi.resize(self._resize(pi.size))
     resize.save('temp_art.png')
     return 'temp_art.png'
+  
+  def _resize(self, dimensions: tuple[int, int]) -> tuple:
+    w, h = dimensions
+    new_width = int(w * (self.config.height/h)) - (2*self.config.image_padding)
+    new_height = int(self.config.height - (2*self.config.image_padding))
+    return (new_width, new_height)
   
   def _create_image(self, current_audio: Path):
     tags = TinyTag.get(current_audio, image=True)
@@ -116,8 +120,7 @@ class Renderer:
     if self.image is not None:
       pi = Image.open(self.image)
       width, height = pi.size
-      new_width = int(width * (self.config.height/height))
-      resize = pi.resize((new_width, self.config.height))
+      resize = pi.resize(self._resize(pi.size))
       resize.save('temp_art.png')
       image = ImageClip('temp_art.png')
       return image.on_color(size=self.dimensions, color=color)

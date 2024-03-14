@@ -18,16 +18,17 @@ DEFAULT_VIDEO_HEIGHT = 1080
 DEFAULT_VIDEO_WIDTH = 1920
 DEFAULT_VIDEO_FRAMERATE = 2
 DEFAULT_VIDEO_OUTPUT = Path.home() / __app_name__
+DEFAULT_IMAGE_PADDING = 0
 
 CFG_VIDEO = "Video"
 CFG_OUTPUT = "Output"
 
-def init_app(bg_color: str, output_dir: str, width: int, height: int) -> int:
+def init_app(bg_color: str, output_dir: str, width: int, height: int, image_padding: int) -> int:
   """ Initialize the application."""
   config_code = _init_config_file()
   if config_code != SUCCESS:
     return config_code
-  create_config_code = _create_config(bg_color, output_dir, width, height)
+  create_config_code = _create_config(bg_color, output_dir, width, height, image_padding)
   if create_config_code != SUCCESS:
     return create_config_code
   return SUCCESS
@@ -43,12 +44,13 @@ def _init_config_file() -> int:
     return CONFIG_FILE_ERROR
   return SUCCESS
 
-def _create_config(bg_color: str, output_dir: str, width: int, height: int) -> int:
+def _create_config(bg_color: str, output_dir: str, width: int, height: int, image_padding: int) -> int:
   config_parser = configparser.ConfigParser()
   config_parser[CFG_VIDEO] = {
     "bg_color": bg_color,
     "width": width,
-    "height": height
+    "height": height,
+    "image_padding": image_padding
     }
   config_parser[CFG_OUTPUT] = {"output_dir": output_dir}
   try:
@@ -78,3 +80,4 @@ class RenderConfig:
     self.output_dir = config[CFG_OUTPUT]["output_dir"]
     self.width = int(config[CFG_VIDEO]["width"])
     self.height = int(config[CFG_VIDEO]["height"])
+    self.image_padding = int(config[CFG_VIDEO]["image_padding"])
