@@ -1,6 +1,6 @@
 # Mp3_to_Mp4
 
-A CLI application for converting audio files (mp3, wav, aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc.
+A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc.
 
 # Technologies Used
 
@@ -20,21 +20,50 @@ A CLI application for converting audio files (mp3, wav, aiff, etc) to mp4 file s
 4. Check if you have Poetry installed for managing dependencies. `poetry --version`
 5. If you do not have Poetry, [install it](https://python-poetry.org/docs/). You may also need Pipx.
 6. If you render any files that do not provide an image, ImageMagick will be required. It can be installed from [here](https://imagemagick.org/script/download.php). Ensure that you select "Install legacy utilities" in the installation options.
-6. After installing Poetry the directory folder, run `poetry install` in the project directory to install the needed dependencies.
-7. You can target a folder to convert with `poetry run mp3-to-mp4 render --folder /c/my_folder/`. If the folder contains multiple audio files, they will all be converted with their respective meta data s the image, unless an image is specified with `--image`.
+6. After installing Poetry the directory folder, run `poetry install` in the project directory to install the required dependencies & application.
+
+# Usage
+
+mp3-to-mp4 is built with the intention of converting folders of tagged audio files to mp4 rapidly.
+
+To convert an entire folder:
+```
+poetry run mp3-to-mp4 render --path /c/my_folder/
+```
+It will default to using a specified image, failing that the file's ID3 image tag will be used.
+
+If there is no image available, text will be generated based on the `artist` and `title` ID3 tags.
+
+Other uses:
+
+Converting a single file and image:
+
+```
+poetry run mp3-to-mp4 render --path /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
+```
+
+
+# Upcoming features
+
+- Full Test Coverage.
+- Default to in-folder image.
+- Joining option for albums folders.
+- Adjustable Resolution
+- Padding for Images.
+- Blurred Background Image option.
+- .exe for no installation. (PyInstaller)
+- Bitrate for audio encoding.
+- Automatic YouTube Upload.
+- Waveform Visualization.
 
 # Known Bugs & Issues
 
 - Coming soon.
 
-# Upcoming features
-
-- Joining option for albums folders.
-- Full Test Coverage.
-In Config:
-- Blurred Background Image.
-- Padding for Images.
-- Automatic YouTube Upload.
-- Waveform Visualization.
-
 # License & Copyright
+
+© [Henry Oberholtzer](https://www.henryoberholtzer.com) 2024
+
+Original Code licensed under a GNU GPLv3
+
+Packages & dependencies licensed as specified in their distributions.
