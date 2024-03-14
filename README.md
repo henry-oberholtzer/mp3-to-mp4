@@ -1,5 +1,4 @@
-# Mp3_to_Mp4
-
+# mp3-to-mp4
 A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc.
 
 # Technologies Used
