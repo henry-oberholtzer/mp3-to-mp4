@@ -64,3 +64,4 @@ class RenderConfig:
     self.height = int(config[GENERAL]["height"])
     self.image_padding = int(config[GENERAL]["image_padding"])
     self.sort_filename = bool(config[GENERAL]["sort_filename"])
+    self.output_fps = int(config[GENERAL]["output_fps"])

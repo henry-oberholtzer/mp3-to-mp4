@@ -20,7 +20,8 @@ def _init_config():
     width=cfg.DEFAULT_VIDEO_WIDTH,
     height=cfg.DEFAULT_VIDEO_HEIGHT,
     image_padding=cfg.DEFAULT_IMAGE_PADDING,
-    sort_filename=cfg.DEFAULT_SORT)
+    sort_filename=cfg.DEFAULT_SORT,
+    output_fps=cfg.DEFAULT_VIDEO_FRAMERATE)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',
@@ -39,37 +40,36 @@ def config(
     str(user_cfg.bg_color),
     "--bg-color",
     "-bg",
-    prompt="Background color? (Hex)"
   ),
   output_dir: str = typer.Option(
     str(user_cfg.output_dir),
     "--output",
     "-o",
-    prompt="Output directory?",
   ),
   width: int = typer.Option(
     int(user_cfg.width),
     "--width",
     "-w",
-    prompt="Video width? (px)"
   ),
   height: int = typer.Option(
     int(user_cfg.height),
     "--height",
     "-h",
-    prompt="Video height? (px)"
   ),
   image_padding: int = typer.Option(
     int(user_cfg.image_padding),
     "--padding",
     "-p",
-    prompt="Image padding? (px)"
   ),
   sort_filename: bool = typer.Option(
     bool(user_cfg.sort_filename),
     "--sort-filename",
     "-s",
-    prompt="Prefer filenames for --join option sort:"
+  ),
+  output_fps: int = typer.Option(
+    int(user_cfg.output_fps),
+    "--fps",
+    "-f",
   )
 ) -> None:
   """
@@ -81,7 +81,8 @@ def config(
     width=width,
     height=height,
     image_padding=image_padding,
-    sort_filename=sort_filename)
+    sort_filename=sort_filename,
+    output_fps=output_fps)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',

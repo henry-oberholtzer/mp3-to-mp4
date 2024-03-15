@@ -87,7 +87,7 @@ class Renderer:
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
     Path(output_dir).mkdir(exist_ok=True)
-    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=2, codec="libx264", audio_bitrate="320k", ffmpeg_params=['-tune','stillimage'])
+    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=self.config.output_fps, codec="libx264", audio_bitrate="320k", ffmpeg_params=['-tune','stillimage'])
 
   def _valid_path(self, path: Path, regex: re, err: int) -> bool:
     if not regex.match(path.suffix):

@@ -58,9 +58,9 @@ If there is no image available, text will be generated based on the `artist` and
 
 ### Configuration Flags:
 
-Flags used under the `config` command. The command will default to prompting through all options at the moment.
+Flags used under the `config` command.
 
-Running `initconfig` will restore the config.ini file to defaults.
+Running `initconfig` will restore the `config.ini` file to defaults.
 
 | Flag                 | Type              | Default Value | Usage                                                                   |
 | -------------------- | ----------------- | ------------- | ----------------------------------------------------------------------- |
