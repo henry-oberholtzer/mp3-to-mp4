@@ -149,6 +149,8 @@ class Renderer:
       image = ImageClip('temp_art.png')
       return image.on_color(size=self.dimensions, color=color)
     text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=self.dimensions)
+    if self.join:
+      text = TextClip(txt=f"{tags.albumartist}\n{tags.album}", font='Courier', color='white', size=self.dimensions)
     return text.on_color(size=self.dimensions, color=color)
 
   def _clean_string(self, string: str):

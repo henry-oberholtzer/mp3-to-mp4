@@ -1,4 +1,5 @@
 # mp3-to-mp4
+
 A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc.
 
 # Technologies Used
@@ -25,21 +26,32 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 
 mp3-to-mp4 is built with the intention of converting folders of tagged audio files to mp4 rapidly.
 
+### Basic:
+
 To convert an entire folder:
 ```
 poetry run mp3-to-mp4 convert /c/my_folder/
 ```
-It will default to using a specified image, failing that the file's ID3 image tag will be used.
-
-If there is no image available, text will be generated based on the `artist` and `title` ID3 tags.
-
-Converting a single file and image:
+Converting a single file and specific (optional) image:
 ```
 poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
 ```
 
 **NOTE**: If your path includes parentheses, you may need to place it in single quotes to avoid bash errors. e.g. '/c/my path (with mp3s)'
 
+### Image Selection:
+
+Images can be specified with the `--image` or `-i` flag.
+
+If no image is specified, mp3-to-mp4 will try to grab the image from the file's metadata.
+
+If no image is present in the metadata, it will search the folder for a suitable image and use the first one it finds.
+
+At the moment, mp3-to-mp4 considers .png and .jpe?g files titled one of the following as suitable images, with no regard for casing.
+
+`folder, album_art, albumart, art`
+
+If there is no image available, text will be generated based on the `artist` and `title` ID3 tags, unless a join command has been given, where the `album artist` and `album title` tags will be used instead.
 
 # Upcoming features
 
