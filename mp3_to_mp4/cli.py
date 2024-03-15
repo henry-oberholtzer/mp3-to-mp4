@@ -84,17 +84,24 @@ def config(
     "-p",
     prompt="Image padding? (px)"
   ),
+  sort_filename: bool = typer.Option(
+    bool(cfg.DEFAULT_SORT),
+    "--sort",
+    "-s",
+    prompt="Prefer filenames for --join option sort:"
+  )
 ) -> None:
   """
   Sets the default rendering configurations.
   """
-  app_init_error = cfg.init_app(bg_color, output_dir, width, height, image_padding=image_padding)
+  app_init_error = cfg.init_app(bg_color=bg_color, output_dir=output_dir, width=width, height=height, image_padding=image_padding, sort_filename=sort_filename)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',
       style="colors(9)"
     )
     raise typer.Exit(1)
+  print(f"Configuration file written to: ", cfg.CONFIG_DIR_PATH)
 
 @app.callback()
 def main(

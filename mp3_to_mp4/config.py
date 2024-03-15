@@ -19,15 +19,16 @@ DEFAULT_VIDEO_WIDTH = 1920
 DEFAULT_VIDEO_FRAMERATE = 2
 DEFAULT_VIDEO_OUTPUT = Path.home() / __app_name__
 DEFAULT_IMAGE_PADDING = 0
+DEFAULT_SORT = True
 
 GENERAL = "General"
 
-def init_app(bg_color: str, output_dir: str, width: int, height: int, image_padding: int) -> int:
+def init_app(**kwargs) -> int:
   """ Initialize the application."""
   config_code = _init_config_file()
   if config_code != SUCCESS:
     return config_code
-  create_config_code = _create_config(bg_color, output_dir, width, height, image_padding)
+  create_config_code = _create_config(**kwargs)
   if create_config_code != SUCCESS:
     return create_config_code
   return SUCCESS

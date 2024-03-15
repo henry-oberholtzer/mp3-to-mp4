@@ -3,6 +3,7 @@ import io
 import re
 from moviepy.video.VideoClip import ImageClip, TextClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
+from moviepy.audio.AudioClip import concatenate_audioclips
 from moviepy.video.fx.resize import resize
 from moviepy.video.compositing import CompositeVideoClip
 from tinytag import TinyTag
@@ -40,25 +41,26 @@ class Renderer:
     elif self.path.is_dir():
       # If path is a directory, get all the files in the folder.
       self._get_folder_audio()
-    else:
+    if len(self.audio_list) == 0:
       print(
-      f'Creating the config file failed with "{ERRORS[VIDEO_RENDER_ERROR]}',
-      style="colors(9)"
-    )
+      f"No viable audio files available in directory. Aborting.")
       raise typer.Exit(1)
     # Now that the audio lists have been compiled, proceed to render all items in audio list.
+    if self.join == False:
+      self._render_batch()
+    else:
+      self._render_album()
+  
+  def _render_batch(self):
     for audio in self.audio_list:
-      print(audio)
       # Generate background image.
       image: CompositeVideoClip = self._create_image(audio)
-      # Composite with art.
-    
       # Add audio to composite video clip.
       audio_clip = AudioFileClip(str(audio))
       image.duration = audio_clip.duration
       image.audio = audio_clip
       # Make filename.
-      tags = TinyTag.get(audio, image=True)
+      tags = TinyTag.get(audio)
       filename = self._clean_string(f"{tags.track}-{tags.artist}-{tags.title}")
       # Render.
       self._final_render(image, self.config.output_dir, filename)
@@ -67,7 +69,19 @@ class Renderer:
       audio_clip.close()
       if Path('temp_art.png').is_file():
         Path('temp_art.png').unlink()
-    
+  
+  def _render_album(self):
+    audio_compile = concatenate_audioclips([AudioFileClip(str(file)) for file in self.audio_list])
+    image: CompositeVideoClip = self._create_image(self.audio_list[0])
+    image.duration = audio_compile.duration
+    image.audio = audio_compile
+    tags = TinyTag.get(self.audio_list[0])
+    filename = self._clean_string(f"{tags.albumartist}-{tags.album}")
+    self._final_render(image, self.config.output_dir, filename)
+    image.close()
+    audio_compile.close()
+    if Path('temp_art.png').is_file():
+        Path('temp_art.png').unlink()
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
     Path(output_dir).mkdir(exist_ok=True)
@@ -85,9 +99,6 @@ class Renderer:
   def _valid_image(self, path: Path):
     image_regex = re.compile("[.]png$|[.]jpe?g$|[.]tiff$|[.]gif$")
     return self._valid_path(path, image_regex, IMAGE_FILE_ERROR)
-
-  def get_image() -> int:
-    return SUCCESS
   
   def _get_folder_audio(self) -> int:
     directory = self.path.glob("*.*")
