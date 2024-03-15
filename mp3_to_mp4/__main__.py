@@ -1,4 +1,4 @@
-"""Mp3 to Mp4 entry point script"""
+"""mp3-to-mp4 entry point script"""
 #mp3_to_mp4/__main__.py
 
 from mp3_to_mp4 import cli, __app_name__

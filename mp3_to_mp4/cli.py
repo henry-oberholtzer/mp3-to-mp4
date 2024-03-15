@@ -63,6 +63,26 @@ def _version_callback(value: bool) -> None:
 
 @app.callback(invoke_without_command=True)
 def main(
+  path: Annotated[Path, typer.Argument(
+    exists=True,
+    file_okay=True,
+    dir_okay=True,
+    readable=True,
+    help="Specifies a path to a folder or file to convert."
+  )] = None,
+  image: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    readable=True,
+    help="Specifies an image to use for conversions."
+    )] = None,
+  join: bool = typer.Option(
+    False,
+    "--join",
+    "-j",
+    help="When converting a folder, all tracks will be joined in sequence into a single video."
+  ),
   version: Optional[bool] = typer.Option(
     None,
     "--version",
@@ -71,28 +91,16 @@ def main(
     callback=_version_callback,
     is_eager=True,
   ),
-  path: Annotated[Path, typer.Option(
-    exists=True,
-    file_okay=True,
-    dir_okay=True,
-    readable=True
-  )] = None,
-  image: Annotated[Optional[Path], typer.Option(
-    exists=True,
-    file_okay=True,
-    dir_okay=False,
-    readable=True
-    )] = None,
-  join: bool = typer.Option(
-    False,
-    "--join",
-    "-j",
-    help="When using a folder, all tracks will be joined in sequence into a single video."
-  )
 ) -> None:
   """
-  Use --path to specify a file or a folder to process.
-  An image can be specified with --image.
+  Converting a file:
+
+  $ mp3-to-mp4 /c/path_to_folder
+
+  $ mp3-to-mp4 /c/path_to_single_file.mp3
+  
+  Conversion will follow settings established in --config
+  
   """
   if path is not None:
     # Check for configuration
