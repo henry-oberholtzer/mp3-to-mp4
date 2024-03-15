@@ -4,7 +4,6 @@ import re
 from moviepy.video.VideoClip import ImageClip, TextClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from moviepy.audio.AudioClip import concatenate_audioclips
-from moviepy.video.fx.resize import resize
 from moviepy.video.compositing import CompositeVideoClip
 from tinytag import TinyTag
 from PIL import Image
@@ -71,10 +70,13 @@ class Renderer:
         Path('temp_art.png').unlink()
   
   def _render_album(self):
-    audio_compile = concatenate_audioclips([AudioFileClip(str(file)) for file in self.audio_list])
+    sorted = self._sort_album_list()
+    print(sorted)
+    audio_compile = concatenate_audioclips([AudioFileClip(str(file)) for file in sorted])
     image: CompositeVideoClip = self._create_image(self.audio_list[0])
     image.duration = audio_compile.duration
     image.audio = audio_compile
+    # Make filename
     tags = TinyTag.get(self.audio_list[0])
     filename = self._clean_string(f"{tags.albumartist}-{tags.album}")
     self._final_render(image, self.config.output_dir, filename)
@@ -146,3 +148,8 @@ class Renderer:
 
   def _clean_string(self, string: str):
     return re.sub(r"\W+", "-", string)
+
+  def _sort_album_list(self) -> list:
+    if not self.config.sort_filename:
+      return sorted(self.audio_list, key=lambda audio: int(TinyTag.get(audio).disc + TinyTag.get(audio).track))
+    return sorted(self.audio_list)

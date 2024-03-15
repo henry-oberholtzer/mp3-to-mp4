@@ -75,3 +75,4 @@ class RenderConfig:
     self.width = int(config[GENERAL]["width"])
     self.height = int(config[GENERAL]["height"])
     self.image_padding = int(config[GENERAL]["image_padding"])
+    self.sort_filename = bool(config[GENERAL]["sort_filename"])

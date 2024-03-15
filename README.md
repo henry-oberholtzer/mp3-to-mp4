@@ -44,13 +44,6 @@ poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/
 # Upcoming features
 
 - Full Test Coverage.
-- Joining option for albums folders.
-  - DONE: In config, allow user to specify to sort on file names or by album & track number.
-  - Sort function in renderer.py for audio list, based on config preferences.
-  - Sort by:
-    file name
-    track index (disc & track index)
-  - Audio concat for join in render.
 - Config output_path as typed path.
 - Changeable config location?
 - Default to in-folder image.
@@ -58,6 +51,7 @@ poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/
 - Resize scaling quality fix.
 - .exe for no installation. (PyInstaller)
 - Adjustable bitrate for audio encoding.
+- Text file with description & information output option.
 - Automatic YouTube Upload.
 - Waveform Visualization.
 - Initialize configuration command.
