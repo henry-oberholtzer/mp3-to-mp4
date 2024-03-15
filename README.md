@@ -33,12 +33,12 @@ It will default to using a specified image, failing that the file's ID3 image ta
 
 If there is no image available, text will be generated based on the `artist` and `title` ID3 tags.
 
-Other uses:
-
 Converting a single file and image:
 ```
 poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
 ```
+
+**NOTE**: If your path includes parentheses, you may need to place it in single quotes to avoid bash errors. e.g. '/c/my path (with mp3s)'
 
 
 # Upcoming features
@@ -48,7 +48,7 @@ poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/
 - Changeable config location?
 - Default to in-folder image.
 - Blurred Background Image option.
-- Resize scaling quality fix.
+- Switch to PIL for text drawing.
 - .exe for no installation. (PyInstaller)
 - Adjustable bitrate for audio encoding.
 - Text file with description & information output option.

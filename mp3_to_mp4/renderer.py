@@ -7,6 +7,7 @@ from moviepy.audio.AudioClip import concatenate_audioclips
 from moviepy.video.compositing import CompositeVideoClip
 from tinytag import TinyTag
 from PIL import Image
+from PIL.Image import Resampling
 from rich import print
 
 
@@ -71,7 +72,6 @@ class Renderer:
   
   def _render_album(self):
     sorted = self._sort_album_list()
-    print(sorted)
     audio_compile = concatenate_audioclips([AudioFileClip(str(file)) for file in sorted])
     image: CompositeVideoClip = self._create_image(self.audio_list[0])
     image.duration = audio_compile.duration
@@ -87,7 +87,7 @@ class Renderer:
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
     Path(output_dir).mkdir(exist_ok=True)
-    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=2, codec="libx264", audio_bitrate="320k")
+    clip.write_videofile(filename=f"{output_dir}\\{filename}.mp4", fps=2, codec="libx264", audio_bitrate="320k", ffmpeg_params=['-tune','stillimage'])
 
   def _valid_path(self, path: Path, regex: re, err: int) -> bool:
     if not regex.match(path.suffix):
@@ -95,7 +95,7 @@ class Renderer:
     return True
   
   def _valid_audio(self, path: Path):
-    audio_regex = re.compile("[.]wav$|[.]mp3$|[.]aiff?$|[.]ogg$|[.]flac")
+    audio_regex = re.compile("[.]wav$|[.]mp3$|[.]aiff?$|[.]ogg$|[.]flac", re.I)
     return self._valid_path(path, audio_regex, AUDIO_FILE_ERROR)
 
   def _valid_image(self, path: Path):
@@ -115,11 +115,11 @@ class Renderer:
   
   def _get_image_from_bytes(self, image: bytes):
     pi = Image.open(io.BytesIO(image))
-    resize = pi.resize(self._resize(pi.size))
+    resize = pi.resize(self._resize_dimensions(pi.size), resample=Resampling.LANCZOS)
     resize.save('temp_art.png')
     return 'temp_art.png'
   
-  def _resize(self, dimensions: tuple[int, int]) -> tuple:
+  def _resize_dimensions(self, dimensions: tuple[int, int]) -> tuple:
     w, h = dimensions
     new_width = int(w * (self.config.height/h)) - (2*self.config.image_padding)
     new_height = int(self.config.height - (2*self.config.image_padding))
@@ -132,7 +132,7 @@ class Renderer:
     # Grabs image from directory.
     if self.image is not None:
       pi = Image.open(self.image)
-      resize = pi.resize(self._resize(pi.size))
+      resize = pi.resize(self._resize_dimensions(pi.size), resample=Resampling.LANCZOS)
       resize.save('temp_art.png')
       image = ImageClip('temp_art.png')
       return image.on_color(size=self.dimensions, color=color)
@@ -142,7 +142,12 @@ class Renderer:
       image = ImageClip(image_path)
       return image.on_color(size=self.dimensions, color=color)
     # Will eventually handle rendering without an image provided.
-    
+    elif (folder_image := self._find_image_in_folder()) is not None:
+      pi = Image.open(folder_image)
+      resize = pi.resize(self._resize_dimensions(pi.size), resample=Resampling.LANCZOS)
+      resize.save('temp_art.png')
+      image = ImageClip('temp_art.png')
+      return image.on_color(size=self.dimensions, color=color)
     text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=self.dimensions)
     return text.on_color(size=self.dimensions, color=color)
 
@@ -153,3 +158,11 @@ class Renderer:
     if not self.config.sort_filename:
       return sorted(self.audio_list, key=lambda audio: int(TinyTag.get(audio).disc + TinyTag.get(audio).track))
     return sorted(self.audio_list)
+  
+  def _find_image_in_folder(self) -> Path:
+    directory = self.path.glob("*.*")
+    possible_images = re.compile(r"folder\.jpe?g|folder\.png|album_?art.jpe?g|album_?art.png|art.png|art.jpe?g", re.I)
+    image_options = [obj for obj in directory if possible_images.match(obj.name)]
+    if len(image_options) != 0:
+      return image_options[0]
+    return None

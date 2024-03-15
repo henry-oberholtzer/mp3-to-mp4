@@ -94,7 +94,13 @@ def config(
   """
   Sets the default rendering configurations.
   """
-  app_init_error = cfg.init_app(bg_color=bg_color, output_dir=output_dir, width=width, height=height, image_padding=image_padding, sort_filename=sort_filename)
+  app_init_error = cfg.init_app(
+    bg_color=bg_color,
+    output_dir=output_dir,
+    width=width,
+    height=height,
+    image_padding=image_padding,
+    sort_filename=sort_filename)
   if app_init_error:
     print(
       f'Creating the config file failed with "{ERRORS[app_init_error]}',
