@@ -54,18 +54,6 @@ def _create_config(**kwargs) -> int:
     return CONFIG_WRITE_ERROR
   return SUCCESS
 
-def check_config() -> int:
-  if not os.path.isfile(CONFIG_FILE_PATH):
-    print("No configuration file found. Creating a configuration file based on defaults.")
-    app_init_error = init_app(DEFAULT_VIDEO_BG_COLOR, DEFAULT_VIDEO_OUTPUT)
-    if app_init_error:
-      print(
-        f'Creating the config file failed with "{ERRORS[app_init_error]}',
-        style="colors(9)"
-      )
-      raise typer.Exit(1)
-  return SUCCESS
-
 class RenderConfig:
   def __init__(self, config_path: Path):
     config = configparser.ConfigParser()

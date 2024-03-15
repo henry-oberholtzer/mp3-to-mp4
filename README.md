@@ -20,7 +20,7 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 4. Check if you have Poetry installed for managing dependencies. `poetry --version`
 5. If you do not have Poetry, [install it](https://python-poetry.org/docs/). You may also need Pipx.
 6. If you render any files that do not provide an image, ImageMagick will be required. It can be installed from [here](https://imagemagick.org/script/download.php). Ensure that you select "Install legacy utilities" in the installation options.
-6. After installing Poetry the directory folder, run `poetry install` in the project directory to install the required dependencies & application.
+7. After installing Poetry the directory folder, run `poetry install` in the project directory to install the required dependencies & application.
 
 # Usage
 
@@ -29,10 +29,13 @@ mp3-to-mp4 is built with the intention of converting folders of tagged audio fil
 ### Basic:
 
 To convert an entire folder:
+
 ```
 poetry run mp3-to-mp4 convert /c/my_folder/
 ```
+
 Converting a single file and specific (optional) image:
+
 ```
 poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
 ```
@@ -47,11 +50,26 @@ If no image is specified, mp3-to-mp4 will try to grab the image from the file's 
 
 If no image is present in the metadata, it will search the folder for a suitable image and use the first one it finds.
 
-At the moment, mp3-to-mp4 considers .png and .jpe?g files titled one of the following as suitable images, with no regard for casing.
+At the moment, mp3-to-mp4 considers .png and .jpeg/.jpg files that match the following as suitable images.
 
 `folder, album_art, albumart, art`
 
 If there is no image available, text will be generated based on the `artist` and `title` ID3 tags, unless a join command has been given, where the `album artist` and `album title` tags will be used instead.
+
+### Configuration Flags:
+
+Flags used under the `config` command. The command will default to prompting through all options at the moment.
+
+Running `initconfig` will restore the config.ini file to defaults.
+
+| Flag                 | Type              | Default Value | Usage                                                                   |
+| -------------------- | ----------------- | ------------- | ----------------------------------------------------------------------- |
+| `--output, -o`       | String (path)     | ~/mp3-to-mp4  | Sets video output directory.                                            |
+| `--bg-color, -bg`    | String (Hex Code) | #000000       | Sets the color the image is rendered against.                           |
+| `--width, -w`        | Integer (pixels)  | 1920          | Sets the video width.                                                   |
+| `--height,-h`        | Integer (pixels)  | 1080          | Sets the video height.                                                  |
+| `--padding,-p`       | Integer (pixels)  | 0             | Sets a padding for the album art.                                       |
+| `--sort-filename,-s` | Boolean           | True          | Determines if filenames should be used to sort albums `--join` command. |
 
 # Upcoming features
 
@@ -66,8 +84,6 @@ If there is no image available, text will be generated based on the `artist` and
 - Text file with description & information output option.
 - Automatic YouTube Upload.
 - Waveform Visualization.
-- Initialize configuration command.
-- Show current settings on config.
 - Custom Progress Log
 - File name parameters.
 
