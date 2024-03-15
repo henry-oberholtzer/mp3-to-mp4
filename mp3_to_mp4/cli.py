@@ -54,6 +54,12 @@ def _version_callback(value: bool) -> None:
 
 @app.command()
 def config(
+  bg_color: str = typer.Option(
+    str(cfg.DEFAULT_VIDEO_BG_COLOR),
+    "--bg-color",
+    "--bg",
+    prompt="Background color? (Hex)"
+  ),
   output_dir: str = typer.Option(
     str(cfg.DEFAULT_VIDEO_OUTPUT),
     "--output",
@@ -64,26 +70,24 @@ def config(
     int(cfg.DEFAULT_VIDEO_WIDTH),
     "--width",
     "-w",
-    prompt="Video width: (px)"
+    prompt="Video width? (px)"
   ),
   height: int = typer.Option(
     int(cfg.DEFAULT_VIDEO_HEIGHT),
     "--height",
     "-h",
-    prompt="Video height: (px)"
+    prompt="Video height? (px)"
   ),
   image_padding: int = typer.Option(
     int(cfg.DEFAULT_IMAGE_PADDING),
     "--padding",
     "-p",
-    prompt="Image padding: (px)"
+    prompt="Image padding? (px)"
   ), 
 ) -> None:
   """
   Sets the default rendering configurations.
   """
-  bg_color = Prompt.ask("Background color: ")
-  output_dir = Prompt.ask()
   app_init_error = cfg.init_app(bg_color, output_dir, width, height, image_padding=image_padding)
   if app_init_error:
     print(
