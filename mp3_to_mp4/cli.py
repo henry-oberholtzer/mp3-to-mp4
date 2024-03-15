@@ -90,7 +90,7 @@ def main(
     help="Show the application's version and exit.",
     callback=_version_callback,
     is_eager=True,
-  ),
+  )
 ) -> None:
   """
   Converting a file:
@@ -99,15 +99,15 @@ def main(
 
   $ mp3-to-mp4 /c/path_to_single_file.mp3
   
-  Conversion will follow settings established in --config
+  Conversion will follow settings established in --config.
   
   """
   if path is not None:
-    # Check for configuration
+    # Check for configuration.
     cfg.check_config()
-    # Get configuration
-    render_cfg = cfg.RenderConfig(cfg.CONFIG_FILE_PATH)
-    # get_config() Needs to be written
+    # Get configuration information.
+    render_cfg = cfg.RenderConfig(cfg.CONFIG_FILE_PATH)\
+    # Create renderer instance.
     video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
     video.render()
 

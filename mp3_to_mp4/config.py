@@ -20,8 +20,7 @@ DEFAULT_VIDEO_FRAMERATE = 2
 DEFAULT_VIDEO_OUTPUT = Path.home() / __app_name__
 DEFAULT_IMAGE_PADDING = 0
 
-CFG_VIDEO = "Video"
-CFG_OUTPUT = "Output"
+GENERAL = "General"
 
 def init_app(bg_color: str, output_dir: str, width: int, height: int, image_padding: int) -> int:
   """ Initialize the application."""
@@ -44,15 +43,9 @@ def _init_config_file() -> int:
     return CONFIG_FILE_ERROR
   return SUCCESS
 
-def _create_config(bg_color: str, output_dir: str, width: int, height: int, image_padding: int) -> int:
+def _create_config(**kwargs) -> int:
   config_parser = configparser.ConfigParser()
-  config_parser[CFG_VIDEO] = {
-    "bg_color": bg_color,
-    "width": width,
-    "height": height,
-    "image_padding": image_padding
-    }
-  config_parser[CFG_OUTPUT] = {"output_dir": output_dir}
+  config_parser[GENERAL] = kwargs
   try:
     with CONFIG_FILE_PATH.open("w") as file:
       config_parser.write(file)
@@ -76,8 +69,8 @@ class RenderConfig:
   def __init__(self, config_path: Path):
     config = configparser.ConfigParser()
     config.read(config_path)
-    self.bg_color = config[CFG_VIDEO]["bg_color"]
-    self.output_dir = config[CFG_OUTPUT]["output_dir"]
-    self.width = int(config[CFG_VIDEO]["width"])
-    self.height = int(config[CFG_VIDEO]["height"])
-    self.image_padding = int(config[CFG_VIDEO]["image_padding"])
+    self.bg_color = config[GENERAL]["bg_color"]
+    self.output_dir = config[GENERAL]["output_dir"]
+    self.width = int(config[GENERAL]["width"])
+    self.height = int(config[GENERAL]["height"])
+    self.image_padding = int(config[GENERAL]["image_padding"])

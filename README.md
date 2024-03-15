@@ -53,6 +53,7 @@ poetry run mp3-to-mp4 /c/my_folder/my_music.mp3 --image /c/other_folder/image.jp
 - Waveform Visualization.
 - Initialize configuration command.
 - Show current settings on config.
+- Custom Progress Log
 - File name parameters.
 
 # Known Bugs & Issues
