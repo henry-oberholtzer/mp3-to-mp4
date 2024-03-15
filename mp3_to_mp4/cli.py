@@ -83,7 +83,7 @@ def config(
     "--padding",
     "-p",
     prompt="Image padding? (px)"
-  ), 
+  ),
 ) -> None:
   """
   Sets the default rendering configurations.
