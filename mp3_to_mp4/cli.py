@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Optional
 from rich import print
+from rich.prompt import Prompt
 
 import typer
 from typing_extensions import Annotated
@@ -12,13 +13,47 @@ from mp3_to_mp4 import ERRORS, __app_name__, __version__, config as cfg, rendere
 app = typer.Typer()
 
 @app.command()
-def config(
-  bg_color: str = typer.Option(
-    str(cfg.DEFAULT_VIDEO_BG_COLOR),
-    "--bg-color",
-    "-bg",
-    prompt="Background Color? (Hex)",
+def convert(
+    path: Annotated[Path, typer.Argument(
+    exists=True,
+    file_okay=True,
+    dir_okay=True,
+    readable=True,
+    help="Specifies a path to a folder or file to convert."
+  )] = None,
+  image: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=True,
+    dir_okay=False,
+    readable=True,
+    help="Specifies an image to use for conversions."
+    )] = None,
+  join: bool = typer.Option(
+    False,
+    "--join",
+    "-j",
+    help="When converting a folder, all tracks will be joined in sequence into a single video."
   ),
+):
+  """
+  Converts a file or directory according to the config.
+  """
+  if path is not None:
+    # Check for configuration
+    cfg.check_config()
+    # Get configuration
+    render_cfg = cfg.RenderConfig(cfg.CONFIG_FILE_PATH)
+    # get_config() Needs to be written
+    video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
+    video.render()
+
+def _version_callback(value: bool) -> None:
+  if value:
+    print(f"{__app_name__} v{__version__}\n")
+    raise typer.Exit()
+
+@app.command()
+def config(
   output_dir: str = typer.Option(
     str(cfg.DEFAULT_VIDEO_OUTPUT),
     "--output",
@@ -47,6 +82,8 @@ def config(
   """
   Sets the default rendering configurations.
   """
+  bg_color = Prompt.ask("Background color: ")
+  output_dir = Prompt.ask()
   app_init_error = cfg.init_app(bg_color, output_dir, width, height, image_padding=image_padding)
   if app_init_error:
     print(
@@ -55,34 +92,8 @@ def config(
     )
     raise typer.Exit(1)
 
-def _version_callback(value: bool) -> None:
-  if value:
-    print(f"{__app_name__} v{__version__}\n")
-    raise typer.Exit()
-
-
-@app.callback(invoke_without_command=True)
+@app.callback()
 def main(
-  path: Annotated[Path, typer.Argument(
-    exists=True,
-    file_okay=True,
-    dir_okay=True,
-    readable=True,
-    help="Specifies a path to a folder or file to convert."
-  )] = None,
-  image: Annotated[Optional[Path], typer.Option(
-    exists=True,
-    file_okay=True,
-    dir_okay=False,
-    readable=True,
-    help="Specifies an image to use for conversions."
-    )] = None,
-  join: bool = typer.Option(
-    False,
-    "--join",
-    "-j",
-    help="When converting a folder, all tracks will be joined in sequence into a single video."
-  ),
   version: Optional[bool] = typer.Option(
     None,
     "--version",
@@ -92,22 +103,5 @@ def main(
     is_eager=True,
   ),
 ) -> None:
-  """
-  Converting a file:
-
-  $ mp3-to-mp4 /c/path_to_folder
-
-  $ mp3-to-mp4 /c/path_to_single_file.mp3
-  
-  Conversion will follow settings established in --config
-  
-  """
-  if path is not None:
-    # Check for configuration
-    cfg.check_config()
-    # Get configuration
-    render_cfg = cfg.RenderConfig(cfg.CONFIG_FILE_PATH)
-    # get_config() Needs to be written
-    video = renderer.Renderer(path=path, image=image, join=join, config=render_cfg)
-    video.render()
+  return
 

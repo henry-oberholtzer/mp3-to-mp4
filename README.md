@@ -27,7 +27,7 @@ mp3-to-mp4 is built with the intention of converting folders of tagged audio fil
 
 To convert an entire folder:
 ```
-poetry run mp3-to-mp4 /c/my_folder/
+poetry run mp3-to-mp4 convert /c/my_folder/
 ```
 It will default to using a specified image, failing that the file's ID3 image tag will be used.
 
@@ -37,7 +37,7 @@ Other uses:
 
 Converting a single file and image:
 ```
-poetry run mp3-to-mp4 /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
+poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
 ```
 
 
