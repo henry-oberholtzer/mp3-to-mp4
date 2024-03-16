@@ -19,7 +19,7 @@ from mp3_to_mp4 import (__app_name__, ERRORS, SUCCESS, VIDEO_RENDER_ERROR,
   IMAGE_FILE_ERROR, AUDIO_FILE_ERROR, config)
 
 class Renderer:
-  def __init__(self, config: config.RenderConfig, path: Path, image: Path = None, join: bool = False):
+  def __init__(self, config: config.Config, path: Path, image: Path = None, join: bool = False):
     self.config = config
     self.path = path
     self.image = image

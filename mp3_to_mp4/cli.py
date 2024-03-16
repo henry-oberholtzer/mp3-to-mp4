@@ -1,41 +1,20 @@
 """ This module provides the command line interface for mp3 to mp4 """
 # mp3_to_mp4/cli.py
-import os
 from pathlib import Path
 from typing import Optional
 from rich import print
-from rich.prompt import Prompt
 
 import typer
 from typing_extensions import Annotated
 
-from mp3_to_mp4 import ERRORS, __app_name__, __version__, config as cfg, renderer
+from mp3_to_mp4 import ERRORS, __app_name__, __version__, config, renderer
 
 app = typer.Typer()
-
-def _init_config():
-  app_init_error = cfg.init_app(
-    bg_color=cfg.DEFAULT_VIDEO_BG_COLOR,
-    output_dir=cfg.DEFAULT_VIDEO_OUTPUT,
-    width=cfg.DEFAULT_VIDEO_WIDTH,
-    height=cfg.DEFAULT_VIDEO_HEIGHT,
-    image_padding=cfg.DEFAULT_IMAGE_PADDING,
-    sort_filename=cfg.DEFAULT_SORT,
-    output_fps=cfg.DEFAULT_VIDEO_FRAMERATE)
-  if app_init_error:
-    print(
-      f'Creating the config file failed with "{ERRORS[app_init_error]}',
-      style="colors(9)"
-    )
-    raise typer.Exit(1)
-
-if not os.path.isfile(cfg.CONFIG_FILE_PATH):
-  _init_config()
   
-user_cfg = cfg.RenderConfig(cfg.CONFIG_FILE_PATH)
+user_cfg = config.Config()
 
-@app.command()
-def config(
+@app.command("config")
+def set_config(
   bg_color: str = typer.Option(
     str(user_cfg.bg_color),
     "--bg-color",
@@ -75,7 +54,7 @@ def config(
   """
   Sets the default rendering configurations.
   """
-  app_init_error = cfg.init_app(
+  app_init_error = user_cfg.update(
     bg_color=bg_color,
     output_dir=output_dir,
     width=width,
@@ -89,14 +68,14 @@ def config(
       style="colors(9)"
     )
     raise typer.Exit(1)
-  print(f"Configuration file written to: ", cfg.CONFIG_DIR_PATH)
+  print(f"Configuration file written to: ", user_cfg.CONFIG_DIR_PATH)
 
 @app.command()
 def initconfig():
   """
   Sets the default rendering configurations.
   """
-  _init_config()
+  user_cfg.restore_defaults()
   print("Configuration initialized to default settings.")
 
 @app.command()
