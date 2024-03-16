@@ -16,7 +16,7 @@ def temp_cfg(temp_dir) -> config.Config:
     tmp_cfg_file = temp_dir / "config.ini"
     return config.Config(config_dir_path=temp_dir, config_file_path=tmp_cfg_file)
 
-class TestConfig:
+class TestConfig:  
   def test_init_defaults(self, temp_cfg):
     assert temp_cfg.bg_color == temp_cfg.BG_COLOR
     assert temp_cfg.width == temp_cfg.WIDTH
@@ -30,3 +30,12 @@ class TestConfig:
     temp_cfg.update(bg_color=color)
     parser.read(temp_cfg.config_file_path)
     assert parser["General"]["bg_color"] == color
+  def test_restore_defaults(self, temp_cfg):
+    color = "#121212"
+    parser = configparser.ConfigParser()
+    temp_cfg.update(bg_color=color)
+    parser.read(temp_cfg.config_file_path)
+    assert parser["General"]["bg_color"] == color
+    temp_cfg.restore_defaults()
+    parser.read(temp_cfg.config_file_path)
+    assert parser["General"]["bg_color"] == temp_cfg.BG_COLOR

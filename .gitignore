@@ -5,4 +5,4 @@ __pycache__/
 testfiles
 input
 dist
-.coverage
+\.coverage

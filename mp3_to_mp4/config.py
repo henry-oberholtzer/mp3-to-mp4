@@ -26,7 +26,6 @@ class Config:
       self.__config_default()
       self.__init__(config_dir_path, config_file_path=config_file_path)
     else:
-      print(config_file_path)
       parser = configparser.ConfigParser()
       parser.read(config_file_path)
       self.config_dir_path = config_dir_path
