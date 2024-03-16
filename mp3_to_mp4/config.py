@@ -11,8 +11,6 @@ from mp3_to_mp4 import (
 
 class Config:
   """ Handles creating, modifying and reading the config.ini file."""
-  CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
-  CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
   BG_COLOR = "#000000"
   WIDTH = 1920
   HEIGHT = 1080
@@ -21,13 +19,18 @@ class Config:
   IMAGE_PADDING = 0
   SORT_FILENAME = True
   GENERAL = "General"
-  def __init__(self):
-    if not os.path.isfile(self.CONFIG_FILE_PATH):
+  def __init__(self, config_dir_path: Path, config_file_path: Path):
+    if not os.path.isfile(config_file_path):
+      self.config_dir_path = config_dir_path
+      self.config_file_path = config_file_path
       self.__config_default()
-      self.__init__()
+      self.__init__(config_dir_path, config_file_path=config_file_path)
     else:
+      print(config_file_path)
       parser = configparser.ConfigParser()
-      parser.read(self.CONFIG_FILE_PATH)
+      parser.read(config_file_path)
+      self.config_dir_path = config_dir_path
+      self.config_file_path = config_file_path
       self.bg_color = parser[self.GENERAL]["bg_color"]
       self.output_dir = parser[self.GENERAL]["output_dir"]
       self.width = int(parser[self.GENERAL]["width"])
@@ -68,11 +71,11 @@ class Config:
     
   def __init_config_file(self) -> int:
     try:
-      self.CONFIG_DIR_PATH.mkdir(exist_ok=True)
+      self.config_dir_path.mkdir(exist_ok=True)
     except OSError:
       return CONFIG_DIR_ERROR
     try:
-      self.CONFIG_FILE_PATH.touch(exist_ok=True)
+      self.config_file_path.touch(exist_ok=True)
     except OSError:
       return CONFIG_FILE_ERROR
     return SUCCESS
@@ -81,7 +84,7 @@ class Config:
     config_parser = configparser.ConfigParser()
     config_parser[self.GENERAL] = kwargs
     try:
-      with self.CONFIG_FILE_PATH.open("w") as file:
+      with self.config_file_path.open("w") as file:
         config_parser.write(file)
     except OSError:
       return CONFIG_WRITE_ERROR

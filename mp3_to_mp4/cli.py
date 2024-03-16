@@ -10,8 +10,11 @@ from typing_extensions import Annotated
 from mp3_to_mp4 import ERRORS, __app_name__, __version__, config, renderer
 
 app = typer.Typer()
-  
-user_cfg = config.Config()
+
+CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
+CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
+
+user_cfg = config.Config(config_dir_path=CONFIG_DIR_PATH, config_file_path=CONFIG_FILE_PATH)
 
 @app.command("config")
 def set_config(
@@ -68,7 +71,7 @@ def set_config(
       style="colors(9)"
     )
     raise typer.Exit(1)
-  print(f"Configuration file written to: ", user_cfg.CONFIG_DIR_PATH)
+  print(f"Configuration file written to: ", user_cfg.config_file_path)
 
 @app.command()
 def initconfig():
