@@ -23,11 +23,11 @@ def set_config(
     "--bg-color",
     "-bg",
   ),
-  output_dir: str = typer.Option(
-    str(user_cfg.output_dir),
-    "--output",
-    "-o",
-  ),
+  output: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=False,
+    dir_okay=True
+  )] = Path(user_cfg.output_dir),
   width: int = typer.Option(
     int(user_cfg.width),
     "--width",
@@ -57,21 +57,22 @@ def set_config(
   """
   Sets the default rendering configurations.
   """
-  if (param_err := user_cfg.check_params(bg_color=bg_color)) == SUCCESS:
-    app_init_error = user_cfg.update(
-      bg_color=bg_color,
-      output_dir=output_dir,
-      width=width,
-      height=height,
-      image_padding=image_padding,
-      sort_filename=sort_filename,
-      output_fps=output_fps)
-    if app_init_error:
-      print(f'Creating the config file failed with {ERRORS[app_init_error]}')
-      raise typer.Exit(1)
-    print(f"Configuration file written to: {user_cfg.config_file_path}")
-  print(f'Creating the config file failed with {ERRORS[param_err]}')
-  raise typer.Exit(1)
+  if (param_err := user_cfg.check_params(bg_color=bg_color, width=width, height=height)) != SUCCESS:
+    print(f'Creating the config file failed with {ERRORS[param_err]}')
+    raise typer.Exit(1)
+  app_init_error = user_cfg.update(
+    bg_color=bg_color,
+    output_dir=output,
+    width=width,
+    height=height,
+    image_padding=image_padding,
+    sort_filename=sort_filename,
+    output_fps=output_fps)
+  if app_init_error:
+    print(f'Creating the config file failed with {ERRORS[app_init_error]}')
+    raise typer.Exit(1)
+  print(f"Configuration file written to: {user_cfg.config_file_path}")
+
 
 @app.command()
 def initconfig():
@@ -108,9 +109,10 @@ def convert(
   Converts a file or directory according to the config.
   """
   if path is not None:
-    # get_config() Needs to be written
     video = renderer.Renderer(path=path, image=image, join=join, config=user_cfg)
-    video.render()
+    return video.render()
+  else:
+    print("Please specify a target path or file.")
 
 def _version_callback(value: bool) -> None:
   if value:

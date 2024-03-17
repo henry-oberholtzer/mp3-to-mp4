@@ -32,7 +32,7 @@ class Config:
       self.config_dir_path = config_dir_path
       self.config_file_path = config_file_path
       self.bg_color = parser[self.GENERAL]["bg_color"]
-      self.output_dir = parser[self.GENERAL]["output_dir"]
+      self.output_dir = Path(parser[self.GENERAL]["output_dir"])
       self.width = int(parser[self.GENERAL]["width"])
       self.height = int(parser[self.GENERAL]["height"])
       self.image_padding = int(parser[self.GENERAL]["image_padding"])
@@ -87,12 +87,23 @@ class Config:
       return CONFIG_WRITE_ERROR
     return SUCCESS
   
-  def check_params(self, bg_color: str):
-    return self.__check_color(bg_color)
-    
+  def check_params(self, bg_color: str, width: int, height: int):
+    checks = [
+    self.__check_color(bg_color),
+    self.__check_dimension(width),
+    self.__check_dimension(height),
+    ]
+    if all([True if check == SUCCESS else False for check in checks]):
+      return SUCCESS
+    return CONFIG_PARAM_ERROR
 
   def __check_color(self, color: str):
-    hex_regex = re.compile(r'/^#?([a-f0-9]{6}|[a-f0-9]{3})$/')
+    hex_regex = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
     if hex_regex.fullmatch(color) == None:
       return CONFIG_PARAM_ERROR
     return SUCCESS
+
+  def __check_dimension(self, px: int):
+    if 0 < px < 3841:
+      return SUCCESS
+    return CONFIG_PARAM_ERROR

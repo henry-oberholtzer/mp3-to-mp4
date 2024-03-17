@@ -69,6 +69,7 @@ class Renderer:
       audio_clip.close()
       if Path('temp_art.png').is_file():
         Path('temp_art.png').unlink()
+      return SUCCESS
   
   def _render_album(self):
     sorted = self._sort_album_list()
@@ -84,6 +85,7 @@ class Renderer:
     audio_compile.close()
     if Path('temp_art.png').is_file():
         Path('temp_art.png').unlink()
+    return SUCCESS
   
   def _final_render(self, clip: CompositeVideoClip, output_dir: str, filename: str):
     Path(output_dir).mkdir(exist_ok=True)

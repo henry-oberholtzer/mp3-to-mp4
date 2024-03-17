@@ -3,8 +3,9 @@ import pytest
 import typer
 import os
 import configparser
+import tempfile
 from typer.testing import CliRunner
-from mp3_to_mp4 import CONFIG_PARAM_ERROR, cli, ERRORS, CONFIG_DIR_ERROR, __app_name__, __version__, config
+from mp3_to_mp4 import CONFIG_PARAM_ERROR, SUCCESS, cli, renderer, ERRORS, CONFIG_DIR_ERROR, __app_name__, __version__, config
 runner = CliRunner()
 
 def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
@@ -12,9 +13,23 @@ def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
 
 parser = configparser.ConfigParser()
 
+class FalseRenderer:
+  def __init__(config: config.Config, path: Path, image: Path = None, join: bool = False):
+    pass
+
+def false_render():
+  return SUCCESS
+
 class TestCliConvert:
-  def test_path_dir(self):
-    return pytest.fail("Not written")
+  def test_path_none(self):
+    result = runner.invoke(cli.app, ["convert"])
+    assert result.output == "Please specify a target path or file.\n"
+  def test_path_dir(self, monkeypatch, temp_dir):
+    monkeypatch.setattr(renderer.Renderer, "render", false_render)
+    monkeypatch.setattr(renderer, "Renderer", FalseRenderer)
+    result = runner.invoke(cli.app, ["convert", "--path", temp_dir])
+    assert result.return_value == SUCCESS
+    
   def test_path_file(self):
     return pytest.fail("Not written")
   def test_path_err(self):
@@ -37,7 +52,7 @@ class TestCliConfig:
     assert result.exit_code == 1
   def test_config_bg_color(self, temp_user_cfg: config.Config):
     color = "#343434"
-    runner.invoke(cli.app, ["config", "--bg-color", color])
+    result = runner.invoke(cli.app, ["config", "--bg-color", color])
     parser.read(temp_user_cfg.config_file_path)
     assert parser[temp_user_cfg.GENERAL]["bg_color"] == color
   def test_config_bg_color_invalid(self, temp_user_cfg: config.Config):
@@ -46,18 +61,43 @@ class TestCliConfig:
     assert result.output == f'Creating the config file failed with {ERRORS[CONFIG_PARAM_ERROR]}\n'
     assert result.exit_code == 1
     
-  def test_config_output_dir(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+  def test_config_output_dir(self, temp_dir, temp_user_cfg: config.Config):
+    path = temp_dir
+    runner.invoke(cli.app, ["config", "--output", path])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["output_dir"] == str(path)
+  def test_config_output_dir_bad_path(self, temp_file, temp_user_cfg: config.Config):
+    path = temp_file
+    result = runner.invoke(cli.app, ["config", "--output", path])
+    assert result.exit_code == 1
+  def test_config_output_dir_non_existent(self, temp_file, temp_user_cfg: config.Config):
+    path = tempfile.TemporaryDirectory(delete=True)
+    result = runner.invoke(cli.app, ["config", "--output", path])
+    assert result.exit_code == 1
   def test_config_width(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+    width = 2160
+    runner.invoke(cli.app, ["config", "--width", width])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["width"] == str(width)
   def test_config_height(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+    height = 1920
+    runner.invoke(cli.app, ["config", "--height", height])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["height"] == str(height)
   def test_config_image_padding(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+    padding = 200
+    runner.invoke(cli.app, ["config", "--padding", padding])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["image_padding"] == str(padding)
   def test_config_sort_filename(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+    runner.invoke(cli.app, ["config", "--sort-filename"])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["sort_filename"] == str(False)
   def test_config_output_fps(self, temp_user_cfg: config.Config):
-    return pytest.fail("Not written")
+    fps = 30
+    runner.invoke(cli.app, ["config", "--fps", fps])
+    parser.read(temp_user_cfg.config_file_path)
+    assert parser[temp_user_cfg.GENERAL]["output_fps"] == str(fps)
 
 class TestCliInitconfig:
   def test_initconfig(self, temp_dir: Path, monkeypatch: pytest.MonkeyPatch):

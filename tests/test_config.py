@@ -3,7 +3,7 @@ from pathlib import Path
 import typer
 import configparser
 
-from mp3_to_mp4 import config, ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_WRITE_ERROR
+from mp3_to_mp4 import CONFIG_PARAM_ERROR, SUCCESS, config, ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_WRITE_ERROR
 
 
 
@@ -53,3 +53,15 @@ class TestConfig:
     temp_cfg.restore_defaults()
     parser.read(temp_cfg.config_file_path)
     assert parser["General"]["bg_color"] == temp_cfg.BG_COLOR
+
+  def test_check_color(self, temp_cfg: config.Config):
+    color_list = ["#000000", "#123", "#aaa", "#efFdEa"]
+    bad_color_list = ["#BADMAN", "19", "####", "A!!!", "#12121212"]
+    assert all([True if temp_cfg._Config__check_color(color) == SUCCESS else False for color in color_list])
+    assert all([True if temp_cfg._Config__check_color(color) == CONFIG_PARAM_ERROR else False for color in bad_color_list])
+
+  def test_check_dimension(self, temp_cfg: config.Config):
+    good_px = [426, 1080, 1920, 3840]
+    bad_px = [3841, 0, -1]
+    assert all([True if temp_cfg._Config__check_dimension(px) == SUCCESS else False for px in good_px])
+    assert all([True if temp_cfg._Config__check_dimension(px) == CONFIG_PARAM_ERROR else False for px in bad_px])

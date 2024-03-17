@@ -8,6 +8,11 @@ import mp3_to_mp4
 def temp_dir():
   with tempfile.TemporaryDirectory() as tempdir:
     return Path(tempdir)
+
+@pytest.fixture()
+def temp_file():
+  with tempfile.TemporaryFile() as temp_file:
+    return temp_file
   
 @pytest.fixture()
 def temp_cfg(temp_dir) -> config.Config:
@@ -22,3 +27,5 @@ def temp_user_cfg(temp_cfg, monkeypatch):
 @pytest.fixture
 def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
   raise OSError
+
+
