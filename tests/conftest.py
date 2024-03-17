@@ -17,3 +17,4 @@ def temp_cfg(temp_dir) -> config.Config:
 @pytest.fixture()
 def temp_user_cfg(temp_cfg, monkeypatch):
   monkeypatch.setattr(cli, "user_cfg", temp_cfg)
+  return temp_cfg

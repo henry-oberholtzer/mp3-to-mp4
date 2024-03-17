@@ -2,7 +2,6 @@
 # mp3_to_mp4/cli.py
 from pathlib import Path
 from typing import Optional
-from rich import print
 
 import typer
 from typing_extensions import Annotated
@@ -68,11 +67,10 @@ def set_config(
     output_fps=output_fps)
   if app_init_error:
     print(
-      f'Creating the config file failed with "{ERRORS[app_init_error]}',
-      style="colors(9)"
+      f'Creating the config file failed with "{ERRORS[app_init_error]}'
     )
     raise typer.Exit(1)
-  print(f"Configuration file written to: ", user_cfg.config_file_path)
+  print(f"Configuration file written to: {user_cfg.config_file_path}")
 
 @app.command()
 def initconfig():
@@ -84,7 +82,7 @@ def initconfig():
 
 @app.command()
 def convert(
-    path: Annotated[Path, typer.Argument(
+  path: Annotated[Path, typer.Argument(
     exists=True,
     file_okay=True,
     dir_okay=True,

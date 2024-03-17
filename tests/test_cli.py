@@ -20,8 +20,9 @@ class TestCliConvert:
     return pytest.fail("Not written")
 
 class TestCliConfig:
-  def test_config_success(self):
-    return pytest.fail("Not written")
+  def test_config_success(self, temp_user_cfg: config.Config):
+    result = runner.invoke(cli.app, "config")
+    assert result.output == f"Configuration file written to: {temp_user_cfg.config_file_path}\n"
   def test_config_failure(self):
     return pytest.fail("Not written")
   def test_config_bg_color(self):
@@ -34,7 +35,7 @@ class TestCliConfig:
     return pytest.fail("Not written")
   def test_config_image_padding(self):
     return pytest.fail("Not written")
-  def test_config_soft_filename(self):
+  def test_config_sort_filename(self):
     return pytest.fail("Not written")
   def test_config_output_fps(self):
     return pytest.fail("Not written")
@@ -46,8 +47,10 @@ class TestCliInitconfig:
     monkeypatch.setattr(cli, "user_cfg", cfg)
     # Check if file exists.
     assert os.path.isfile(tmp_cfg_file)
+    # Remove the file.
     os.remove(tmp_cfg_file)
     assert not os.path.isfile(tmp_cfg_file)
+    # Initialize the configuration.
     result = runner.invoke(cli.app, "initconfig")
     assert result.output == "Configuration initialized to default settings.\n"
     assert os.path.isfile(tmp_cfg_file)
