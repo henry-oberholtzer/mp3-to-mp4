@@ -1,20 +1,11 @@
 import pytest
 from pathlib import Path
-import tempfile
 import typer
 import configparser
 
 from mp3_to_mp4 import config, ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_WRITE_ERROR
 
-@pytest.fixture()
-def temp_dir():
-  with tempfile.TemporaryDirectory() as tempdir:
-    return Path(tempdir)
-  
-@pytest.fixture()
-def temp_cfg(temp_dir) -> config.Config:
-    tmp_cfg_file = temp_dir / "config.ini"
-    return config.Config(config_dir_path=temp_dir, config_file_path=tmp_cfg_file)
+
 
 def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
   raise OSError

@@ -14,6 +14,7 @@ app = typer.Typer()
 CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
 
+
 user_cfg = config.Config(config_dir_path=CONFIG_DIR_PATH, config_file_path=CONFIG_FILE_PATH)
 
 @app.command("config")
@@ -114,7 +115,7 @@ def convert(
 
 def _version_callback(value: bool) -> None:
   if value:
-    print(f"{__app_name__} v{__version__}\n")
+    print(f"{__app_name__} v{__version__}")
     raise typer.Exit()
 
 
