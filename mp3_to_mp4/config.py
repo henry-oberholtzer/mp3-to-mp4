@@ -62,10 +62,7 @@ class Config:
       sort_filename=self.SORT_FILENAME,
       output_fps=self.FRAMERATE)
     if app_init_error:
-      print(
-        f'Creating the config file failed with "{ERRORS[app_init_error]}',
-        style="colors(9)"
-      )
+      print(f'Creating the config file failed with: {ERRORS[app_init_error]}')
       raise typer.Exit(1)
     
   def __init_config_file(self) -> int:
