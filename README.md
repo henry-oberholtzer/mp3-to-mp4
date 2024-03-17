@@ -14,6 +14,11 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 
 # Installation Guide
 
+## Distribution
+1. mp3-to-mp4 is available under [pypi](htts://pypi.org) as `mp3-to-mp4`.
+2. Simply run `pip install mp3-to-mp4` to install.
+
+## From Source
 1. Download the [repository](https://github.com/henry-oberholtzer/mp3-to-mp4.git)
 2. Ensure Python and Pip are installed on your system: `python --v` and `pip --v`
 3. If you do not have Python installed, install from [the official distribution](https://www.python.org/downloads/)
