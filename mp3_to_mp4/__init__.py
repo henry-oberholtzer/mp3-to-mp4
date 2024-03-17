@@ -20,6 +20,7 @@ __version__ = "0.1.0"
   CONFIG_FILE_ERROR,
   CONFIG_READ_ERROR,
   CONFIG_WRITE_ERROR,
+  CONFIG_PARAM_ERROR,
   AUDIO_FILE_ERROR,
   AUDIO_DIR_ERROR,
   AUDIO_READ_ERROR,
@@ -28,13 +29,14 @@ __version__ = "0.1.0"
   IMAGE_READ_ERROR,
   OUTPUT_DIR_ERROR,
   VIDEO_RENDER_ERROR,
-) = range(13)
+) = range(14)
 
 ERRORS = {
   CONFIG_DIR_ERROR: "Configuration directory error",
   CONFIG_FILE_ERROR: "Configuration file error",
   CONFIG_READ_ERROR: "Configuration read error",
-  CONFIG_WRITE_ERROR: "Configurationwrite error",
+  CONFIG_WRITE_ERROR: "Configuration rite error",
+  CONFIG_PARAM_ERROR: "ERROR: Parameter value incompatible",
   AUDIO_FILE_ERROR: "Audio file error",
   AUDIO_DIR_ERROR: "Audio directory error",
   AUDIO_READ_ERROR: "Audio read error",

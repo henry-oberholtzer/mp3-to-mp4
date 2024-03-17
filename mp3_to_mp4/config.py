@@ -1,12 +1,13 @@
 """This module provides the mp3-to-mp4 configuration functionality."""
 import configparser
 import os
+import re
 from pathlib import Path
 
 import typer
 
 from mp3_to_mp4 import (
-  ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_READ_ERROR, CONFIG_WRITE_ERROR, SUCCESS, __app_name__
+  ERRORS, CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_PARAM_ERROR, CONFIG_WRITE_ERROR, SUCCESS, __app_name__
 )
 
 class Config:
@@ -84,4 +85,14 @@ class Config:
         config_parser.write(file)
     except OSError:
       return CONFIG_WRITE_ERROR
+    return SUCCESS
+  
+  def check_params(self, bg_color: str):
+    return self.__check_color(bg_color)
+    
+
+  def __check_color(self, color: str):
+    hex_regex = re.compile(r'/^#?([a-f0-9]{6}|[a-f0-9]{3})$/')
+    if hex_regex.fullmatch(color) == None:
+      return CONFIG_PARAM_ERROR
     return SUCCESS

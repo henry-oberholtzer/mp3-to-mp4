@@ -6,7 +6,7 @@ from typing import Optional
 import typer
 from typing_extensions import Annotated
 
-from mp3_to_mp4 import ERRORS, __app_name__, __version__, config, renderer
+from mp3_to_mp4 import ERRORS, SUCCESS, __app_name__, __version__, config, renderer
 
 app = typer.Typer()
 
@@ -57,20 +57,21 @@ def set_config(
   """
   Sets the default rendering configurations.
   """
-  app_init_error = user_cfg.update(
-    bg_color=bg_color,
-    output_dir=output_dir,
-    width=width,
-    height=height,
-    image_padding=image_padding,
-    sort_filename=sort_filename,
-    output_fps=output_fps)
-  if app_init_error:
-    print(
-      f'Creating the config file failed with "{ERRORS[app_init_error]}'
-    )
-    raise typer.Exit(1)
-  print(f"Configuration file written to: {user_cfg.config_file_path}")
+  if (param_err := user_cfg.check_params(bg_color=bg_color)) == SUCCESS:
+    app_init_error = user_cfg.update(
+      bg_color=bg_color,
+      output_dir=output_dir,
+      width=width,
+      height=height,
+      image_padding=image_padding,
+      sort_filename=sort_filename,
+      output_fps=output_fps)
+    if app_init_error:
+      print(f'Creating the config file failed with {ERRORS[app_init_error]}')
+      raise typer.Exit(1)
+    print(f"Configuration file written to: {user_cfg.config_file_path}")
+  print(f'Creating the config file failed with {ERRORS[param_err]}')
+  raise typer.Exit(1)
 
 @app.command()
 def initconfig():
