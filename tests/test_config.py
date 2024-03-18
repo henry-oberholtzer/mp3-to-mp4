@@ -11,7 +11,7 @@ def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
   raise OSError
 
 class TestConfig:  
-  def test_init_defaults(self, temp_cfg):
+  def test_init_defaults(self, temp_cfg: config.Config):
     assert temp_cfg.bg_color == temp_cfg.BG_COLOR
     assert temp_cfg.width == temp_cfg.WIDTH
     assert temp_cfg.height == temp_cfg.HEIGHT

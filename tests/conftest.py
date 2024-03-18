@@ -2,7 +2,6 @@ import pytest
 import tempfile
 from pathlib import Path
 from mp3_to_mp4 import config, cli
-import mp3_to_mp4
 
 @pytest.fixture()
 def temp_dir():
@@ -10,8 +9,8 @@ def temp_dir():
     return Path(tempdir)
 
 @pytest.fixture()
-def temp_file():
-  with tempfile.TemporaryFile() as temp_file:
+def temp_mp3():
+  with tempfile.TemporaryFile(suffix=".mp3") as temp_file:
     return temp_file
   
 @pytest.fixture()
@@ -24,8 +23,6 @@ def temp_user_cfg(temp_cfg, monkeypatch):
   monkeypatch.setattr(cli, "user_cfg", temp_cfg)
   return temp_cfg
 
-@pytest.fixture
-def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
-  raise OSError
-
-
+# @pytest.fixture
+# def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
+#   raise OSError
