@@ -30,27 +30,22 @@ class Renderer:
 
   def render(self):
     # If the path is a file, proceed with single file rendering.
-    if self.image is not None and self.image.is_file():
-        # Rendering with provided image
-        print(self.image)
-    if self.path.is_file():
-      # Rendering without provided image
-      if self._valid_audio(self.path):
-        self.audio_list.append(self.path)
-      else:
-        return AUDIO_FILE_ERROR
-    elif self.path.is_dir():
-      # If path is a directory, get all the files in the folder.
-      self._get_folder_audio()
-    if len(self.audio_list) == 0:
-      print(
-      f"No viable audio files available in directory. Aborting.")
-      raise typer.Exit(1)
+    self._set_audio_list()
     # Now that the audio lists have been compiled, proceed to render all items in audio list.
     if self.join == False:
       self._render_batch()
     else:
       self._render_album()
+      
+  def _set_audio_list(self):
+    if self._valid_audio(self.path):
+      self.audio_list.append(self.path)
+    elif self.path.is_dir():
+    # If path is a directory, get all the files in the folder.
+      folder_audio = self._get_folder_audio()
+      if folder_audio != SUCCESS:
+        print(f"No viable audio files available in directory. Aborting.")
+        raise typer.Exit(1)
   
   def _render_batch(self):
     for audio in self.audio_list:
@@ -135,51 +130,50 @@ class Renderer:
     return re.sub(r"\W+", "-", string)
 
 # This chunk is purely concerned with image things, so I may split this off soon.
-  def _get_image_from_bytes(self, image: bytes):
-    resize = self._image_resize(io.BytesIO(image))
-    resize.save('temp_art.png')
-    return 'temp_art.png'
   
   def _image_scale_dimensions(self, dimensions: tuple[int, int]) -> tuple:
     w, h = dimensions
-    new_width = int(w * (self.config.height/h)) - (2*self.config.image_padding)
-    new_height = int(self.config.height - (2*self.config.image_padding))
+    new_width = int(w * (self.config.height/h)) - (2*self.config.image_padding % w)
+    new_height = int(self.config.height - (2*self.config.image_padding % h))
     return (new_width, new_height)
   
   def _image_hex_to_rgb(self, hex: str) -> tuple:
     h = hex.lstrip("#")
+    if len(h) == 3:
+      return tuple(int(h[i] + h[i], 16) for i in (0, 1, 2))
     return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
   
   def _image_resize(self, img):
     i = Image.open(img)
     return i.resize(self._image_scale_dimensions(i.size), resample=Resampling.LANCZOS)
   
-  def _image_clip_on_color(self, img):
-    color = self._hex_to_rgb(self.config.bg_color)
-    resize = self._image_resize(self.image)
-    resize.save('temp_art.png')
-    image = ImageClip('temp_art.png')
+  def _image_clip_on_color(self, img, filepath) -> ImageClip:
+    color = self._image_hex_to_rgb(self.config.bg_color)
+    resize = self._image_resize(img)
+    resize.save(filepath)
+    image = ImageClip(filepath)
     return image.on_color(size=self.dimensions, color=color)
   
-  def _image_text_on_color(self, tags: TinyTag):
+  def _image_text_on_color(self, tags) -> ImageClip:
     color = self._image_hex_to_rgb(self.config.bg_color)
     text = TextClip(txt=f"{tags.artist}\n{tags.title}", font='Courier', color='white', size=self.dimensions)
     if self.join:
       text = TextClip(txt=f"{tags.albumartist}\n{tags.album}", font='Courier', color='white', size=self.dimensions)
     return text.on_color(size=self.dimensions, color=color)
   
-  def _create_image(self, current_audio: Path):
+  def _create_image(self, current_audio: Path) -> ImageClip:
     tags = TinyTag.get(current_audio, image=True)
+    filename = Path("temp_art.png")
   # Grabs image from directory.
     if self.image is not None:
-      self._image_clip_on_color(self.image)
+      return self._image_clip_on_color(self.image, filepath=filename)
   # Grabs image from metadata.
     elif (image_bytes := tags.get_image()) is not None:
-      self._image_clip_on_color(image_bytes)
+      return self._image_clip_on_color(io.BytesIO(image_bytes), filepath=filename)
   # Will eventually handle rendering without an image provided.
     elif (folder_image := self._find_image_in_folder()) is not None:
-      self._image_clip_on_color(folder_image)
+      return self._image_clip_on_color(folder_image, filepath=filename)
     else:
-      self._image_text_on_color(tags)
+      return self._image_text_on_color(tags)
 
   

@@ -66,11 +66,11 @@ class TestCliConfig:
     runner.invoke(cli.app, ["config", "--output", path])
     parser.read(temp_user_cfg.config_file_path)
     assert parser[temp_user_cfg.GENERAL]["output_dir"] == str(path)
-  def test_config_output_dir_bad_path(self, temp_file, temp_user_cfg: config.Config):
-    path = temp_file
+  def test_config_output_dir_bad_path(self, temp_mp3, temp_user_cfg: config.Config):
+    path = temp_mp3
     result = runner.invoke(cli.app, ["config", "--output", path])
     assert result.exit_code == 1
-  def test_config_output_dir_non_existent(self, temp_file, temp_user_cfg: config.Config):
+  def test_config_output_dir_non_existent(self, temp_user_cfg: config.Config):
     path = tempfile.TemporaryDirectory(delete=True)
     result = runner.invoke(cli.app, ["config", "--output", path])
     assert result.exit_code == 1
