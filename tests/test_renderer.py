@@ -1,4 +1,5 @@
 import io
+import py
 import os
 from pathlib import Path
 from moviepy.video.VideoClip import ImageClip, TextClip
@@ -54,10 +55,30 @@ class TestRenderer:
       captured = capsys.readouterr()
       assert render.audio_list == []
       assert captured.out == f"No viable audio files available in directory. Aborting."
-  def test_render_join_true(self, render: r):
-    pass
-  def test_render_batch(self, render: r):
-    pass
+  def test_render_join_false(self, monkeypatch, mocker, render: r):
+    monkeypatch.setattr(render, "_set_audio_list", lambda: None)
+    monkeypatch.setattr(render, "_render_album", lambda: None)
+    monkeypatch.setattr(render, "_render_batch", lambda: None)
+    spy = mocker.spy(render, '_set_audio_list')
+    spy_album = mocker.spy(render, '_render_album')
+    spy_batch = mocker.spy(render, '_render_batch')
+    render.render()
+    assert spy.call_count == 1
+    assert spy_album.call_count == 0
+    assert spy_batch.call_count == 1
+
+  def test_render_join_true(self, monkeypatch, mocker, render: r):
+    monkeypatch.setattr(render, "_set_audio_list", lambda: None)
+    monkeypatch.setattr(render, "_render_album", lambda: None)
+    monkeypatch.setattr(render, "_render_batch", lambda: None)
+    spy = mocker.spy(render, '_set_audio_list')
+    spy_album = mocker.spy(render, '_render_album')
+    spy_batch = mocker.spy(render, '_render_batch')
+    render.join = True
+    render.render()
+    assert spy.call_count == 1
+    assert spy_album.call_count == 1
+    assert spy_batch.call_count == 0
   def test_render_album(self, render: r):
     pass
 

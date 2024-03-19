@@ -29,13 +29,12 @@ class Renderer:
 # This chunk is concerned with actually rendering the video.
 
   def render(self):
-    # If the path is a file, proceed with single file rendering.
     self._set_audio_list()
     # Now that the audio lists have been compiled, proceed to render all items in audio list.
-    if self.join == False:
-      self._render_batch()
-    else:
-      self._render_album()
+    if self.join:
+      return self._render_album()
+    # If the path is a file, proceed with single file rendering.
+    return self._render_batch()
       
   def _set_audio_list(self):
     if self._valid_audio(self.path):
@@ -61,11 +60,7 @@ class Renderer:
       # Render.
       self._final_render(image, self.config.output_dir, filename)
       # Close & remove files.
-      image.close()
-      audio_clip.close()
-      if Path('temp_art.png').is_file():
-        Path('temp_art.png').unlink()
-      return SUCCESS
+      return self._close_render(self, image, audio)
   
   def _render_album(self):
     sorted = self._sort_album_list()
@@ -77,8 +72,12 @@ class Renderer:
     tags = TinyTag.get(self.audio_list[0])
     filename = self._clean_string(f"{tags.albumartist}-{tags.album}")
     self._final_render(image, self.config.output_dir, filename)
+    return self._close_render(image, audio_compile)
+  
+  
+  def _close_render(self, image, audio):
     image.close()
-    audio_compile.close()
+    audio.close()
     if Path('temp_art.png').is_file():
         Path('temp_art.png').unlink()
     return SUCCESS
