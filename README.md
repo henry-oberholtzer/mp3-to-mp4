@@ -2,6 +2,14 @@
 
 A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc.
 
+# Features
+
+- Batch folder rendering
+- Saved renderer defaults
+- Adjustable background color
+- Adjustable dimensions
+- High test coverage (97%)
+
 # Technologies Used
 
 - Python 3.12.0
@@ -78,7 +86,6 @@ Running `initconfig` will restore the `config.ini` file to defaults.
 
 # Upcoming features
 
-- Full Test Coverage.
 - Config output_path as typed path.
 - Changeable config location?
 - Default to in-folder image.
