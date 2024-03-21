@@ -39,5 +39,11 @@ class TestCreateImage:
     ci.dimensions = (300, 300)
     result = ci.resize_foreground()
     W, H = result.size
-    result.show()
     assert (W, H) == ci.dimensions
+  def test_resize_foreground_padding(self, ci: CreateImage):
+    ci.foreground = Image.new(mode="RGB", size=(600, 600), color=(0,0,0))
+    ci.dimensions = (300, 300)
+    ci.image_padding = 25
+    result = ci.resize_foreground()
+    W, H = result.size
+    assert (W, H) == (ci.dimensions[0] - 50, ci.dimensions[1] - 50)

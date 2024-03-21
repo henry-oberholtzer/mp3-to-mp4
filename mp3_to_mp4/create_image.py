@@ -23,6 +23,11 @@ class CreateImage:
     self.font_scale = font_scale
     self.font_color = font_color
     self.image_padding = image_padding
+  
+  def composite_image(self):
+    """
+    Composites the foreground and background properties into a single image.
+    """
     
   def solid_background(self):
     """
@@ -38,6 +43,7 @@ class CreateImage:
     
     Optional blur and opacity can be set.
     """
+    return self.background
   
   def resize_foreground(self):
     """
