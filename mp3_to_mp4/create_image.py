@@ -1,4 +1,4 @@
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from PIL.Image import Resampling
 
 class CreateImage:
@@ -11,10 +11,14 @@ class CreateImage:
     font: str = None,
     font_scale: float = 0.8,
     font_color: tuple[int, int, int] = (255, 255, 255),
-    image_padding: int = 0
+    image_padding: int = 0,
+    background_blur: int = 10,
+    background_grow: float = 0.5
     ):
     self.foreground = foreground
     self.background = background
+    self.background_blur = background_blur
+    self.background_grow = background_grow
     self.dimensions = dimensions
     self.center = (int(dimensions[0]/2), int(dimensions[1]/2))
     self.color = color
@@ -28,12 +32,15 @@ class CreateImage:
     """
     Composites the foreground and background properties into a single image.
     """
+    self.background.paste(self.foreground, (0,0), self.foreground)
+    return self.background
     
   def solid_background(self):
     """
     Generates the background based on dimensions and color.
     """
-    img = Image.new(mode="RGB", size=self.dimensions, color=self.color)
+    r,g,b = self.color
+    img = Image.new(mode="RGBA", size=self.dimensions, color=(r,g,b,255))
     self.background = img
     return self.background
   
@@ -41,13 +48,26 @@ class CreateImage:
     """
     Resizes & crops a provided image to serve as the background.
     
-    Optional blur and opacity can be set.
+    Optional blur can be set.
     """
+    W, H = self.background.size
+    w, h = self.dimensions
+    ratio = (w / W) * (1 + self.background_grow)
+    scale = self.background.resize((int(H * ratio),int(W * ratio)), resample=Resampling.LANCZOS)
+    s_w, s_h = scale.size
+    side_margin = int((s_w - w)/2)
+    vert_margin = int((s_h - h)/2)
+    crop = scale.crop((side_margin, vert_margin, s_w - side_margin, s_h - vert_margin))
+    crop.putalpha
+    if self.background_blur != 0:
+      self.background = crop.filter(ImageFilter.GaussianBlur(radius = self.background_blur))
+    else:
+      self.background = crop
     return self.background
   
   def resize_foreground(self):
     """
-    Resizes a provided image to fit as the foreground image.
+    Resizes and positions a provided image to fit as the foreground image.
     """
     if self.foreground:
       W, H = self.foreground.size
@@ -56,6 +76,18 @@ class CreateImage:
       new_w = int(W * ratio - (2*self.image_padding % W))
       new_h = int(h - (2*self.image_padding % h))
       self.foreground = self.foreground.resize((new_w, new_h), resample=Resampling.LANCZOS)
+    return self.foreground
+  
+  def position_foreground(self):
+    """
+    Positions the foreground image on the center of the canvas, on a blank background.
+    """
+    img_w, img_h = self.foreground.size
+    alpha = Image.new("RGBA", self.dimensions, (255, 255, 255, 0))
+    bg_w, bg_h = alpha.size
+    offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
+    alpha.paste(self.foreground, offset)
+    self.foreground = alpha
     return self.foreground
   
   def text_foreground(self):
