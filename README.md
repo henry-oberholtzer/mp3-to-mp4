@@ -86,7 +86,6 @@ Running `initconfig` will restore the `config.ini` file to defaults.
 
 # Upcoming features
 
-- Config output_path as typed path.
 - Changeable config location?
 - Default to in-folder image.
 - Blurred Background Image option.
