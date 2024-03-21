@@ -22,7 +22,3 @@ def temp_cfg(temp_dir) -> config.Config:
 def temp_user_cfg(temp_cfg, monkeypatch):
   monkeypatch.setattr(cli, "user_cfg", temp_cfg)
   return temp_cfg
-
-# @pytest.fixture
-# def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
-#   raise OSError

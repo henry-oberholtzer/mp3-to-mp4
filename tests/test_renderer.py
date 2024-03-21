@@ -82,15 +82,12 @@ class TestRenderer:
     
   def test_final_render(self, render: r):
     pass
-  
   def test_render_batch(self, render: r):
     pass
-
   def test_render_album(self, render: r):
     pass
   def test_create_file_name(self, render: r):
     pass
-  
   def test_close_render(self, render: r):
     pass
 

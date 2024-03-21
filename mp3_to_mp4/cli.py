@@ -84,7 +84,7 @@ def initconfig():
 
 @app.command()
 def convert(
-  path: Annotated[Path, typer.Argument(
+  path: Annotated[Optional[Path], typer.Argument(
     exists=True,
     file_okay=True,
     dir_okay=True,

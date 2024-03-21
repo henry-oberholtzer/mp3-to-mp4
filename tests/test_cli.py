@@ -13,34 +13,14 @@ def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
 
 parser = configparser.ConfigParser()
 
-# class FalseRenderer:
-#   def __init__(config: config.Config, path: Path, image: Path = None, join: bool = False):
-#     pass
-#   def render():
-#     return SUCCESS
-
-# def false_render():
-#   print("Rendered!")
-
-# class TestCliConvert:
-#   def test_path_none(self):
-#     result = runner.invoke(cli.app, ["convert"])
-#     assert result.output == "Please specify a target path or file.\n"
-#   def test_path_dir(self, monkeypatch, temp_mp3, temp_user_cfg):
-#     monkeypatch.setattr("mp3_to_mp4.renderer.Renderer", FalseRenderer)
-#     result = runner.invoke(cli.app, ["convert", str(temp_mp3)])
-#     assert result.return_value == 1
-#   def test_path_file(self):
-#     return pytest.fail("Not written")
-#   def test_path_err(self):
-#     return pytest.fail("Not written")
-#   def test_path_image(self):
-#     return pytest.fail("Not written")
-#   def test_path_image_err(self):
-#     return pytest.fail("Not written")
-#   def test_path_join(self):
-#     return pytest.fail("Not written")
-
+class TestCliConvert:
+  def test_render_if_path(self):
+    result = runner.invoke(cli.app, ["convert", os.path.expanduser('~')])
+    assert result.output == f"No viable audio files available in directory. Aborting.\n"
+  def test_render_fail(self):
+    result = runner.invoke(cli.app, "convert")
+    assert result.output == "Please specify a target path or file.\n"
+  
 class TestCliConfig:
   def test_config_success(self, temp_user_cfg: config.Config):
     result = runner.invoke(cli.app, "config")
