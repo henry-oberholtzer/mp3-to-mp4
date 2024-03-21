@@ -91,7 +91,7 @@ class Renderer:
     return self._valid_path(path, image_regex)
   
   def _get_folder_audio(self) -> int:
-    directory = self.path.glob("*.*")
+    directory = self.path.iterdir()
     self.audio_list = [path for path in directory if self._valid_audio(path)]
     if not len(self.audio_list) > 0:
       return AUDIO_FILE_ERROR

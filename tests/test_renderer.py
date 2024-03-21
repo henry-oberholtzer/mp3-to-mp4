@@ -1,14 +1,15 @@
 import io
-import py
+from tempfile import TemporaryFile
 import os
 from pathlib import Path
 from moviepy.video.VideoClip import ImageClip, TextClip
+import moviepy.audio.io.AudioFileClip as afc
 import PIL
 import pytest
 from tinytag import TinyTag
 import typer
 
-from mp3_to_mp4 import SUCCESS, config, renderer
+from mp3_to_mp4 import AUDIO_FILE_ERROR, SUCCESS, config, renderer
 
 r = renderer.Renderer
 
@@ -80,17 +81,26 @@ class TestRenderer:
     assert spy_album.call_count == 1
     assert spy_batch.call_count == 0
     
-  def test_final_render(self, render: r):
-    pass
-  def test_render_batch(self, render: r):
-    pass
-  def test_render_album(self, render: r):
-    pass
-  def test_create_file_name(self, render: r):
-    pass
-  def test_close_render(self, render: r):
-    pass
+  # def test_final_render(self, render: r):
+  #   pass
+  # def test_render_batch(self, temp_mp3, monkeypatch, render: r):
+  #     render.audio_list = [Path(temp_mp3.name)]
+  #     monkeypatch.setattr(render, "_create_image", lambda args: True)
+  #     monkeypatch.setattr(render, "_final_render", lambda **kwargs: True)
+  #     monkeypatch.setattr(afc, "AudioFileClip", lambda **kwargs: True)
+  #     render._render_batch()
+  # def test_render_album(self, render: r):
+  #   pass
+  # def test_create_file_name(self, render: r):
+  #   pass
+  # def test_close_render(self, render: r):
+  #   pass
 
+class falsePath:
+  def __init__(self, paths):
+    self.paths = paths
+  def iterdir(self):
+    return self.paths
 
 class TestRendererFileFunctions:
   def test_valid_audio(self, render: r):
@@ -103,8 +113,20 @@ class TestRendererFileFunctions:
     assert all([render._valid_image(path) for path in valid_image_paths])
     invalid_image_paths = [Path("image.jrpg"), Path("audio.mp3.mp4"), Path("oops")]
     assert all([True if render._valid_image(path) == False else False for path in invalid_image_paths])
-  def test_get_folder_audio(self, render: r):
-    pytest.fail("Not written")
+  def test_get_folder_audio(self, monkeypatch, render: r):
+    file_paths = [Path("file.mp3"), Path("file.wav"), Path("file.txt")]
+    monkeypatch.setattr(render, "path", falsePath(file_paths))
+    result = render._get_folder_audio()
+    assert len(render.audio_list) == 2
+    assert render.audio_list == file_paths[0:2:1]
+    assert result == SUCCESS
+  def test_get_folder_audio_err(self, monkeypatch, render: r):
+    file_paths = [Path("file.txt")]
+    monkeypatch.setattr(render, "path", falsePath(file_paths))
+    result = render._get_folder_audio()
+    assert len(render.audio_list) == 0
+    assert render.audio_list == []
+    assert result == AUDIO_FILE_ERROR
   def test_sort_album_list(self, temp_user_cfg: config.Config, temp_dir):
     render = r(config=temp_user_cfg, path=temp_dir, image=temp_dir, join=True)
     paths = [Path(temp_dir / "1"), Path(temp_dir / "2"), Path(temp_dir / "3")]
