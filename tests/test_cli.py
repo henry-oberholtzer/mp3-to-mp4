@@ -13,14 +13,14 @@ def os_error(mode: int = 511, parents: bool = False, exist_ok: bool = False):
 
 parser = configparser.ConfigParser()
 
-class FalseRenderer:
-  def __init__(config: config.Config, path: Path, image: Path = None, join: bool = False):
-    pass
-  def render():
-    return SUCCESS
+# class FalseRenderer:
+#   def __init__(config: config.Config, path: Path, image: Path = None, join: bool = False):
+#     pass
+#   def render():
+#     return SUCCESS
 
-def false_render():
-  print("Rendered!")
+# def false_render():
+#   print("Rendered!")
 
 # class TestCliConvert:
 #   def test_path_none(self):
@@ -52,7 +52,7 @@ class TestCliConfig:
     assert result.exit_code == 1
   def test_config_bg_color(self, temp_user_cfg: config.Config):
     color = "#343434"
-    result = runner.invoke(cli.app, ["config", "--bg-color", color])
+    runner.invoke(cli.app, ["config", "--bg-color", color])
     parser.read(temp_user_cfg.config_file_path)
     assert parser[temp_user_cfg.GENERAL]["bg_color"] == color
   def test_config_bg_color_invalid(self, temp_user_cfg: config.Config):

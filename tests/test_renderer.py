@@ -52,9 +52,9 @@ class TestRenderer:
   def test_set_audio_list_no_audio(self, capsys, render: r):
     with pytest.raises(typer.Exit):
       render._set_audio_list()
-      captured = capsys.readouterr()
-      assert render.audio_list == []
-      assert captured.out == f"No viable audio files available in directory. Aborting."
+    captured = capsys.readouterr()
+    assert render.audio_list == []
+    assert captured.out == f"No viable audio files available in directory. Aborting.\n"
   def test_render_join_false(self, monkeypatch, mocker, render: r):
     monkeypatch.setattr(render, "_set_audio_list", lambda: None)
     monkeypatch.setattr(render, "_render_album", lambda: None)
@@ -79,8 +79,21 @@ class TestRenderer:
     assert spy.call_count == 1
     assert spy_album.call_count == 1
     assert spy_batch.call_count == 0
+    
+  def test_final_render(self, render: r):
+    pass
+  
+  def test_render_batch(self, render: r):
+    pass
+
   def test_render_album(self, render: r):
     pass
+  def test_create_file_name(self, render: r):
+    pass
+  
+  def test_close_render(self, render: r):
+    pass
+
 
 class TestRendererFileFunctions:
   def test_valid_audio(self, render: r):
@@ -101,6 +114,10 @@ class TestRendererFileFunctions:
     paths_scrambled = [Path(temp_dir / "3"), Path(temp_dir / "2"), Path(temp_dir / "1"), ]
     render.audio_list = paths_scrambled
     assert render._sort_album_list() == paths
+  def test_sort_album_list_by_tags(self, mocker, render: r):
+    render.config.sort_filename = False
+    assert render._sort_album_list() == []
+    
   def test_check_cover_filename(self, temp_user_cfg: config.Config, temp_dir):
     render = r(config=temp_user_cfg, path=temp_dir, image=temp_dir, join=True)
     valid = [ 
@@ -195,10 +212,12 @@ class TestRendererImageFunctions:
     assert FalseTags.get_image() == None
     assert render._find_image_in_folder() == True
     assert render._create_image(render.config.config_file_path) == True
-  def test_create_image_no_image(self, monkeypatch, render: r):
+  def test_create_image_no_image(self, mocker, monkeypatch, render: r):
     monkeypatch.setattr(TinyTag, "get", lambda path, image: FalseTags)
     monkeypatch.setattr(FalseTags, "get_image", lambda: None)
-    monkeypatch.setattr(render, "_image_clip_on_color", lambda image, filepath: True)
+    render.image = None
     monkeypatch.setattr(render, "_find_image_in_folder", lambda: None)
     monkeypatch.setattr(render, "_image_text_on_color", lambda tags: True)
+    spy = mocker.spy(render, '_image_text_on_color')
     assert render._create_image(render.config.config_file_path) == True
+    assert spy.call_count == 1
