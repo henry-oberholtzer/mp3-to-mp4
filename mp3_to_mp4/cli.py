@@ -94,20 +94,9 @@ def convert(
   if path is not None:
     video = Mp3ToMp4(config=user_cfg, audio=path, image=image, join=join)
     # Create image from the image path.
-    if (err:= video.build_image()) != SUCCESS:
-      print(f"Creating the image failed with {ERRORS[err]}")
-      video.close()
-      raise typer.Exit(1)
-    print("Image built.")
-    if (err:= video.build_audio()) != SUCCESS:
-      print(f"Creating the audio failed with {ERRORS[err]}")
-      video.close()
-      raise typer.Exit(1)
-    print("Audio built.")
-    if (err:= video.render()) != SUCCESS:
-      print(f"Rendering the video failed with {ERRORS[err]}")
-      video.close()
-      raise typer.Exit(1)
+    video.build_image()
+    video.build_audio()
+    video.render()
     video.close()
   else:
     print("Please specify a target path or file.")
