@@ -14,6 +14,9 @@
 __app_name__ = "mp3-to-mp4"
 __version__ = "0.1.0"
 
+from pathlib import Path
+
+
 (
   SUCCESS,
   CONFIG_DIR_ERROR,

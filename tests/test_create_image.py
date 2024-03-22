@@ -16,7 +16,9 @@ class TestCreateImage:
   def test_init(self):
     img = CreateImage()
     assert img.foreground == None
-    assert img.foreground == None
+    assert img.background == None
+    assert img.background_blur == 10
+    assert img.background_grow == 0.5
     assert img.dimensions == (1920, 1080)
     assert img.center == (1920/2, 1080/2)
     assert img.color == (0,0,0)
@@ -58,7 +60,6 @@ class TestCreateImage:
     result = ci.image_background()
     assert result.size == (1920, 1080)
   def test_position_foreground(self, ci: CreateImage):
-    # ci.foreground = Image.new(mode="RGB", size=(800, 800), color=(255, 128, 128))
     ci.foreground = Image.open("tests/resources/test_image.jpg")
     ci.image_padding = 100
     resize = ci.resize_foreground()

@@ -55,10 +55,10 @@ class CreateImage:
     ratio = (w / W) * (1 + self.background_grow)
     scale = self.background.resize((int(H * ratio),int(W * ratio)), resample=Resampling.LANCZOS)
     s_w, s_h = scale.size
-    side_margin = int((s_w - w)/2)
-    vert_margin = int((s_h - h)/2)
+    side_margin = (s_w - w)/2
+    vert_margin = (s_h - h)/2
+    scale.putalpha(1)
     crop = scale.crop((side_margin, vert_margin, s_w - side_margin, s_h - vert_margin))
-    crop.putalpha
     if self.background_blur != 0:
       self.background = crop.filter(ImageFilter.GaussianBlur(radius = self.background_blur))
     else:

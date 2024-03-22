@@ -2,32 +2,38 @@
 # mp3_to_mp4/cli.py
 from pathlib import Path
 from typing import Optional
-
 import typer
 from typing_extensions import Annotated
 
-from mp3_to_mp4 import ERRORS, SUCCESS, __app_name__, __version__, config, renderer
+from mp3_to_mp4.config import Config
+from mp3_to_mp4.mp3_to_mp4 import Mp3ToMp4
+from mp3_to_mp4 import ERRORS, SUCCESS, __app_name__, __version__, renderer
 
 app = typer.Typer()
 
 CONFIG_DIR_PATH = Path(typer.get_app_dir(__app_name__))
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
 
-
-user_cfg = config.Config(config_dir_path=CONFIG_DIR_PATH, config_file_path=CONFIG_FILE_PATH)
+user_cfg = Config(config_file_path=CONFIG_FILE_PATH)
 
 @app.command("config")
 def set_config(
+  init: bool = typer.Option(
+    False,
+    "--init",
+    "-i",
+    help="Initialize settings."
+  ),
   bg_color: str = typer.Option(
     str(user_cfg.bg_color),
     "--bg-color",
     "-bg",
   ),
-  output: Annotated[Optional[Path], typer.Option(
+  output_path: Annotated[Optional[Path], typer.Option(
     exists=True,
     file_okay=False,
     dir_okay=True
-  )] = Path(user_cfg.output_dir),
+  )] = Path(user_cfg.output_path),
   width: int = typer.Option(
     int(user_cfg.width),
     "--width",
@@ -43,44 +49,21 @@ def set_config(
     "--padding",
     "-p",
   ),
-  sort_filename: bool = typer.Option(
-    bool(user_cfg.sort_filename),
-    "--sort-filename",
-    "-s",
-  ),
-  output_fps: int = typer.Option(
-    int(user_cfg.output_fps),
-    "--fps",
-    "-f",
-  )
 ) -> None:
   """
-  Sets the default rendering configurations.
+  Sets the configuration for convert.
   """
-  if (param_err := user_cfg.check_params(bg_color=bg_color, width=width, height=height)) != SUCCESS:
-    print(f'Creating the config file failed with {ERRORS[param_err]}')
-    raise typer.Exit(1)
-  app_init_error = user_cfg.update(
-    bg_color=bg_color,
-    output_dir=output,
-    width=width,
-    height=height,
-    image_padding=image_padding,
-    sort_filename=sort_filename,
-    output_fps=output_fps)
-  if app_init_error:
-    print(f'Creating the config file failed with {ERRORS[app_init_error]}')
-    raise typer.Exit(1)
-  print(f"Configuration file written to: {user_cfg.config_file_path}")
+  if init:
+    if (err := user_cfg.remove_config_file()) != SUCCESS:
+      print(f'Removing the file failed with {ERRORS[err]}')
+      raise typer.Exit(1)
+    user_cfg.read(CONFIG_FILE_PATH)
+    print(f"Configuration initialized.")
+  else:
+    # Update values.
+    return
 
 
-@app.command()
-def initconfig():
-  """
-  Sets the default rendering configurations.
-  """
-  user_cfg.restore_defaults()
-  print("Configuration initialized to default settings.")
 
 @app.command()
 def convert(
@@ -109,8 +92,23 @@ def convert(
   Converts a file or directory according to the config.
   """
   if path is not None:
-    video = renderer.Renderer(path=path, image=image, join=join, config=user_cfg)
-    return video.render()
+    video = Mp3ToMp4(config=user_cfg, audio=path, image=image, join=join)
+    # Create image from the image path.
+    if (err:= video.build_image()) != SUCCESS:
+      print(f"Creating the image failed with {ERRORS[err]}")
+      video.close()
+      raise typer.Exit(1)
+    print("Image built.")
+    if (err:= video.build_audio()) != SUCCESS:
+      print(f"Creating the audio failed with {ERRORS[err]}")
+      video.close()
+      raise typer.Exit(1)
+    print("Audio built.")
+    if (err:= video.render()) != SUCCESS:
+      print(f"Rendering the video failed with {ERRORS[err]}")
+      video.close()
+      raise typer.Exit(1)
+    video.close()
   else:
     print("Please specify a target path or file.")
 

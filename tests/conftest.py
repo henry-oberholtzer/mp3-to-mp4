@@ -14,9 +14,8 @@ def temp_mp3():
     return temp_file
   
 @pytest.fixture()
-def temp_cfg(temp_dir) -> config.Config:
-  tmp_cfg_file = temp_dir / "config.ini"
-  return config.Config(config_dir_path=temp_dir, config_file_path=tmp_cfg_file)
+def temp_cfg_file(temp_dir) -> Path:
+  return Path(temp_dir / "config.ini")
 
 @pytest.fixture()
 def temp_user_cfg(temp_cfg, monkeypatch):
