@@ -11,19 +11,25 @@ from mp3_to_mp4 import ( CONFIG_DIR_ERROR, CONFIG_FILE_ERROR, CONFIG_WRITE_ERROR
   WIDTH,
   HEIGHT,
   BG_COLOR,
+  ENABLE_BG_IMAGE,
   FONT,
+  USE_FILE_IMAGE,
+  USE_FOLDER_IMAGE,
   FONT_SCALE,
   FONT_COLOR,
   IMAGE_PADDING,
   BACKGROUND_BLUR,
   BACKGROUND_GROW,
   OUTPUT_PATH,
-) = range(10)
+) = range(13)
 
 DEFAULTS = {
   WIDTH: 1920,
   HEIGHT: 1080,
   BG_COLOR: "#000000",
+  ENABLE_BG_IMAGE: False,
+  USE_FILE_IMAGE: True,
+  USE_FOLDER_IMAGE: True,
   FONT: None,
   FONT_SCALE: 0.8,
   FONT_COLOR: "#FFFFFF",
@@ -42,7 +48,10 @@ class Config:
       self.font = DEFAULTS[FONT]
       self.font_scale = DEFAULTS[FONT_SCALE]
       self.font_color = DEFAULTS[FONT_COLOR]
+      self.use_file_image = DEFAULTS[USE_FILE_IMAGE]
+      self.use_folder_image = DEFAULTS[USE_FOLDER_IMAGE]
       self.image_padding = DEFAULTS[IMAGE_PADDING]
+      self.enable_bg_image = DEFAULTS[ENABLE_BG_IMAGE]
       self.background_blur = DEFAULTS[BACKGROUND_BLUR]
       self.background_grow = DEFAULTS[BACKGROUND_GROW]
       self.output_path = DEFAULTS[OUTPUT_PATH]
@@ -61,7 +70,10 @@ class Config:
       self.font_scale = float(parser["General"]["font_scale"])
       self.font_color = parser["General"]["font_color"]
       self.image_padding = int(parser["General"]["image_padding"])
+      self.use_file_image = parser["General"]["use_file_image"]
+      self.use_folder_image = parser["General"]["use_folder_image"]
       self.output_path = Path(parser["General"]["output_path"])
+      self.enable_bg_image = parser["General"]["enable_bg_image"]
       self.background_blur = int(parser["General"]["background_blur"])
       self.background_grow = float(parser["General"]["background_grow"])
     else:

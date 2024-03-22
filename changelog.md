@@ -6,4 +6,4 @@
   - Rewrote config.py
   - More user options
   - Smoother handling of configuration files.
-
+  - DEPRECATED: "output_dir" changed to "output_path" for consistency.
