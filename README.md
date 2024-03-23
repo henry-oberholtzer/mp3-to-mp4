@@ -25,10 +25,12 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 # Installation Guide
 
 ## Distribution
+
 1. mp3-to-mp4 is available under [pypi](htts://pypi.org) as `mp3-to-mp4`.
 2. Simply run `pip install mp3-to-mp4` to install.
 
 ## From Source
+
 1. Download the [repository](https://github.com/henry-oberholtzer/mp3-to-mp4.git)
 2. Ensure Python and Pip are installed on your system: `python --v` and `pip --v`
 3. If you do not have Python installed, install from [the official distribution](https://www.python.org/downloads/)
@@ -75,17 +77,7 @@ If there is no image available, text will be generated based on the `artist` and
 
 ### Configuration Flags:
 
-Flags available under the `config` command.
-
-| Flag                 | Type              | Default Value | Usage                                                                   |
-| -------------------- | ----------------- | ------------- | ----------------------------------------------------------------------- |
-| `--output-path`       | String (path)     | ~/mp3-to-mp4  | Sets video output directory.                                            |
-| `--bg-color, -bg`    | String (Hex Code) | #000000       | Sets the color the image is rendered against.                           |
-| `--width, -w`        | Integer (pixels)  | 1920          | Sets the video width.                                                   |
-| `--height,-h`        | Integer (pixels)  | 1080          | Sets the video height.                                                  |
-| `--padding,-p`       | Integer (pixels)  | 0             | Sets a padding for the album art.                                       |
-| `--sort-filename,-s` | Boolean           | True          | Determines if filenames should be used to sort albums `--join` command. |
-| `--bg-blur` | Boolean           | True          | Sets background image blur in pixels, 0 disables. |
+All flags available under the `config --help` command.
 
 # Upcoming features
 
