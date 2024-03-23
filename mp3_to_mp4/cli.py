@@ -175,7 +175,7 @@ def convert(
   """
   if path is not None:
     video = Mp3ToMp4(config=user_cfg, audio=path, image=image, bg_image=bg_image, join=join)
-    # Create image from the image path.
+    video.render()
   else:
     print("Please specify a target path or file.")
 

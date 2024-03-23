@@ -32,7 +32,8 @@ class Mp3ToMp4:
       audio_list=self._audio_list,
       image=self.composite_image,
       filename=clean_string(f"{tags.album}"),
-      output_path=self.config.output_path
+      output_path=self.config.output_path,
+      join=True
     )
 
   def __render_batch(self):
@@ -61,14 +62,13 @@ class Mp3ToMp4:
     # Goes through all relevant image config options to generate the image.
     img = CreateImage(
       dimensions=self.config.dimensions,
-      color=self.config.bg_color,
+      color=ImageColor.getrgb(self.config.bg_color),
       font=str(self.config.font),
       font_scale=self.config.font_scale,
       font_color=ImageColor.getrgb(self.config.font_color),
       image_padding=self.config.image_padding,
       background_blur=self.config.background_blur,
       background_grow=self.config.background_grow,
-      color = ImageColor.getrgb(self.config.bg_color)
       )
     tags = TinyTag.get(audio, image=True)
     
