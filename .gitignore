@@ -6,3 +6,4 @@ testfiles
 input
 dist
 \.coverage
+build/
