@@ -174,7 +174,7 @@ def convert(
   Converts a file or directory according to the config.
   """
   if path is not None:
-    video = Mp3ToMp4(config=user_cfg, audio=path, image=image, bg_image=image, join=join)
+    video = Mp3ToMp4(config=user_cfg, audio=path, image=image, bg_image=bg_image, join=join)
     # Create image from the image path.
   else:
     print("Please specify a target path or file.")

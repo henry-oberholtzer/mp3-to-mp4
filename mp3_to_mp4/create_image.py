@@ -27,6 +27,22 @@ class CreateImage:
     self.font_scale = font_scale
     self.font_color = font_color
     self.image_padding = image_padding
+    
+  def auto_image(self):
+    """
+    Automatically creates an image based on a predetermined structure.
+    """
+    # If foreground image and background image.
+    if self.background:
+      self.image_background()
+    else:
+      self.solid_background()
+    if self.foreground:
+      self.resize_foreground()
+      self.position_foreground()
+    else:
+      self.text_foreground()
+    return self.composite_image()
   
   def composite_image(self):
     """
