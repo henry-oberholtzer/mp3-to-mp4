@@ -38,12 +38,12 @@ def set_config(
     "--bg-grow",
     help="Sets extra percentage to scale background image. Handy for enhancing offset when using album art."
   ),
-  use_file_image = typer.Option(
+  use_file_image: bool = typer.Option(
     bool(user_cfg.use_file_image),
     "--file-img",
     help="When enabled, checks file metadata for an image if none is supplied."
   ),
-  use_folder_image = typer.Option(
+  use_folder_image: bool = typer.Option(
     bool(user_cfg.use_folder_image),
     "--folder-image",
     help="When enabled, checks for a suitable image in the audio file's folder.",

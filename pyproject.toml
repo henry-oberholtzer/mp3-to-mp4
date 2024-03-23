@@ -4,6 +4,7 @@ version = "0.1.1"
 description = "A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to mp4 file suitable for upload to social media sites like YouTube, Vimeo, etc."
 authors = ["Henry Oberholtzer <henryoberholtzer@gmail.com>"]
 readme = "README.md"
+exclude = ["tests/resources"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: End Users/Desktop",
@@ -28,4 +29,5 @@ pyinstaller = "^6.5.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 

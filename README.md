@@ -11,7 +11,7 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 - Preset saved between renders.
 - Optional background image.
 - Automatic text creation if metadata is not provided.
-- High test coverage (97%)
+- High test coverage (74% as of current.)
 
 # Tools Used
 
@@ -26,7 +26,7 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 
 ## Distribution
 
-1. mp3-to-mp4 is available under [pypi](htts://pypi.org) as `mp3-to-mp4`.
+1. mp3-to-mp4 is available on [pypi](htts://pypi.org) as `mp3-to-mp4`.
 2. Simply run `pip install mp3-to-mp4` to install.
 
 ## From Source

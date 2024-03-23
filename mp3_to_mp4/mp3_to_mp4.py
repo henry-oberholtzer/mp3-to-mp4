@@ -83,7 +83,7 @@ class Mp3ToMp4:
         if self.audio.is_file():
           img.foreground = Image.open(get_cover_image_list(audio.parent)[0])
     else:
-      img.foreground = self.provided_image
+      img.foreground = Image.open(self.provided_image)
     # If a background image is provided, use that
     if self.provided_bg_image:
       img.background = self.provided_bg_image
