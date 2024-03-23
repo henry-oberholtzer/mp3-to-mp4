@@ -18,50 +18,25 @@ user_cfg = Config(config_file_path=CONFIG_FILE_PATH)
 
 @app.command("config")
 def set_config(
-  show: bool = typer.Option(
-    False,
-    "--show",
-    help="Prints the current configuration to the console."
-  ),
-  config_path: bool = typer.Option(
-    False,
-    "--path",
-    help="Prints path to configuration file."
-  ),
-  init: bool = typer.Option(
-    False,
-    "--init",
-    "-i",
-    help="Initialize settings."
-  ),
-  output_path: Annotated[Optional[Path], typer.Option(
-    exists=True,
-    file_okay=False,
-    dir_okay=True,
-    help="Path for video output."
-  )] = Path(user_cfg.output_path),
-  width: int = typer.Option(
-    int(user_cfg.width),
-    "--width",
-    "-w",
-    help="Sets video width in pixels."
-  ),
-  height: int = typer.Option(
-    int(user_cfg.height),
-    "--height",
-    "-h",
-    help="Sets video height in pixels."
-  ),
-  image_padding: int = typer.Option(
-    int(user_cfg.image_padding),
-    "--padding",
-    "-p",
-    help="Padding for foreground image in pixels."
+  background_blur: int = typer.Option(
+    int(user_cfg.background_blur),
+    "--bg-blur",
+    help="Sets background image blur in pixels, 0 disables."
   ),
   bg_color: str = typer.Option(
     str(user_cfg.bg_color),
     "--bg-color",
     help="Hex code for background when not using image."
+  ),
+  enable_bg_image: bool = typer.Option(
+    bool(user_cfg.enable_bg_image),
+    "--bg-img",
+    help="Sets if background image will be used."
+  ),
+  background_grow: float = typer.Option(
+    float(user_cfg.background_grow),
+    "--bg-grow",
+    help="Sets extra percentage to scale background image. Handy for enhancing offset when using album art."
   ),
   use_file_image = typer.Option(
     bool(user_cfg.use_file_image),
@@ -72,21 +47,6 @@ def set_config(
     bool(user_cfg.use_folder_image),
     "--folder-image",
     help="When enabled, checks for a suitable image in the audio file's folder.",
-  ),
-  enable_bg_image: bool = typer.Option(
-    bool(user_cfg.enable_bg_image),
-    "--bg-img",
-    help="Sets if background image will be used."
-  ),
-  background_blur: int = typer.Option(
-    int(user_cfg.background_blur),
-    "--bg-blur",
-    help="Sets background image blur in pixels, 0 disables."
-  ),
-  background_grow: float = typer.Option(
-    float(user_cfg.background_grow),
-    "--bg-grow",
-    help="Sets extra percentage to scale background image. Handy for enhancing offset when using album art."
   ),
   font: Annotated[Optional[Path], typer.Option(
     help="Path for font when an image cannot be found.",
@@ -101,6 +61,46 @@ def set_config(
     "--font-scale",
     help="Sets the amount of screen the text width can take up, from 0.0 to 1.0."
     ),
+  height: int = typer.Option(
+    int(user_cfg.height),
+    "--height",
+    "-h",
+    help="Sets video height in pixels."
+  ),
+  init: bool = typer.Option(
+    False,
+    "--init",
+    "-i",
+    help="Initialize settings."
+  ),
+  image_padding: int = typer.Option(
+    int(user_cfg.image_padding),
+    "--padding",
+    "-p",
+    help="Padding for foreground image in pixels."
+  ),
+  config_path: bool = typer.Option(
+    False,
+    "--path",
+    help="Prints path to configuration file."
+  ),
+  output_path: Annotated[Optional[Path], typer.Option(
+    exists=True,
+    file_okay=False,
+    dir_okay=True,
+    help="Path for video output."
+  )] = Path(user_cfg.output_path),
+  show: bool = typer.Option(
+    False,
+    "--show",
+    help="Prints the current configuration to the console."
+  ),
+  width: int = typer.Option(
+    int(user_cfg.width),
+    "--width",
+    "-w",
+    help="Sets video width in pixels."
+  ),
 ) -> None:
   """
   Sets the configuration for convert.
@@ -109,7 +109,6 @@ def set_config(
     if (err := user_cfg.remove_config_file(CONFIG_FILE_PATH)) != SUCCESS:
       print(f'Removing the file failed with {ERRORS[err]}')
       raise typer.Exit(1)
-    user_cfg.read(CONFIG_FILE_PATH)
     print(f"Configuration initialized.")
     raise typer.Exit()
   if config_path:

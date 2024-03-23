@@ -8,16 +8,18 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 - Saved renderer defaults
 - Adjustable background color
 - Adjustable dimensions
+- Preset saved between renders.
+- Optional background image.
+- Automatic text creation if metadata is not provided.
 - High test coverage (97%)
 
-# Technologies Used
+# Tools Used
 
 - Python 3.12.0
 - Typer 0.9.0
 - MoviePy 1.0.3
 - TinyTag 1.10.1
 - PyTest
-- ImageMagick
 - Poetry (Dependency management)
 
 # Installation Guide
@@ -39,25 +41,27 @@ A CLI application for converting audio files (.mp3, .wav, .flac, .aiff, etc) to 
 
 mp3-to-mp4 is built with the intention of converting folders of tagged audio files to mp4 rapidly.
 
-### Basic:
+### Conversion:
 
 To convert an entire folder:
 
 ```
-poetry run mp3-to-mp4 convert /c/my_folder/
+mp3-to-mp4 convert /c/my_folder/
 ```
 
 Converting a single file and specific (optional) image:
 
 ```
-poetry run mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
+mp3-to-mp4 convert /c/my_folder/my_music.mp3 --image /c/other_folder/image.jpg
 ```
 
 **NOTE**: If your path includes parentheses, you may need to place it in single quotes to avoid bash errors. e.g. '/c/my path (with mp3s)'
 
 ### Image Selection:
 
-Images can be specified with the `--image` or `-i` flag.
+Image paths can be specified with the `--image` flag.
+
+A background image path can be specified with the `--bg-image` flag.
 
 If no image is specified, mp3-to-mp4 will try to grab the image from the file's metadata.
 
@@ -67,40 +71,34 @@ At the moment, mp3-to-mp4 considers .png and .jpeg/.jpg files that match the fol
 
 `folder, album_art, albumart, art`
 
-If there is no image available, text will be generated based on the `artist` and `title` ID3 tags, unless a join command has been given, where the `album artist` and `album title` tags will be used instead.
+If there is no image available, text will be generated based on the `artist` and `title` ID3 tags, unless a join command has been given, where the `album artist` and `album title` tags will be used.
 
 ### Configuration Flags:
 
-Flags used under the `config` command.
-
-Running `initconfig` will restore the `config.ini` file to defaults.
+Flags available under the `config` command.
 
 | Flag                 | Type              | Default Value | Usage                                                                   |
 | -------------------- | ----------------- | ------------- | ----------------------------------------------------------------------- |
-| `--output, -o`       | String (path)     | ~/mp3-to-mp4  | Sets video output directory.                                            |
+| `--output-path`       | String (path)     | ~/mp3-to-mp4  | Sets video output directory.                                            |
 | `--bg-color, -bg`    | String (Hex Code) | #000000       | Sets the color the image is rendered against.                           |
 | `--width, -w`        | Integer (pixels)  | 1920          | Sets the video width.                                                   |
 | `--height,-h`        | Integer (pixels)  | 1080          | Sets the video height.                                                  |
 | `--padding,-p`       | Integer (pixels)  | 0             | Sets a padding for the album art.                                       |
 | `--sort-filename,-s` | Boolean           | True          | Determines if filenames should be used to sort albums `--join` command. |
+| `--bg-blur` | Boolean           | True          | Sets background image blur in pixels, 0 disables. |
 
 # Upcoming features
 
-- Changeable config location?
-- Default to in-folder image.
-- Blurred Background Image option.
-- Switch to PIL for text drawing.
-- .exe for no installation. (PyInstaller)
-- Adjustable bitrate for audio encoding.
+- .exe distribution.
 - Text file with description & information output option.
 - Automatic YouTube Upload.
 - Waveform Visualization.
-- Custom Progress Log
-- File name parameters.
+- Custom progress log.
+- Custom file naming parameters.
 
 # Known Bugs & Issues
 
-- [Open an issue](https://github.com/henry-oberholtzer/mp3-to-mp4/issues) if you encounter any.
+- Please [open an issue](https://github.com/henry-oberholtzer/mp3-to-mp4/issues) if you encounter any.
 
 # License & Copyright
 
